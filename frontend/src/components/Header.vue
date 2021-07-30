@@ -56,7 +56,7 @@
       <v-avatar
         @click.stop="$store.state.drawer = !$store.state.drawer"
         color="indigo"
-        v-if="$vuetify.breakpoint.lgAndUp"
+        v-if="$vuetify.breakpoint.lgAndUp && $store.state.isLoggedIn"
       >
         <span class="white--text headline" v-if="!$store.state.user.imageUrl">
           {{ $store.state.user.initial }}

@@ -41,7 +41,7 @@ export default {
     }
   },
     beforeCreate() {
-    if (!this.$store.state.isLoggedIn) {this.$router.push('Home')} 
+    if (!this.$store.state.isLoggedIn) {this.$router.push('/')} 
   }
 };
 </script>

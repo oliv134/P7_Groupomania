@@ -101,6 +101,7 @@ export default {
   methods: {
     logOut: function () {
       this.$store.dispatch("logOut");
+      this.$router.push('/');
     },
   },
 };
