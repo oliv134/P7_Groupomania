@@ -11,7 +11,7 @@
         </p>
       </v-col>
       <v-col cols="2" md="1">
-        <v-btn icon v-if="isOwner" @click="deleteComment">
+        <v-btn icon v-if="isOwner || isAdmin" @click="deleteComment">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </v-col>
@@ -38,6 +38,9 @@ export default {
   computed: {
     isOwner() {
       return this.comment.Userid === this.$store.state.user.id;
+    },
+    isAdmin() {
+      return this.$store.state.user.admin;
     },
     localDate() {
       return moment

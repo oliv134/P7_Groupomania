@@ -236,8 +236,7 @@ exports.deleteComment = async (req, res) => {
     };
 
     if (!(await user.isAdmin(auth.getTokenUserId(req)))) {
-      userId = await auth.getTokenUserId(req);
-      where.UserId = userId;
+      where.userId = auth.getTokenUserId(req);
     }
 
     let comment = await Comment.findOne({
