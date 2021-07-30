@@ -157,13 +157,13 @@
                         v-if="$vuetify.breakpoint.lgAndUp"
                       >
                         <v-avatar color="white">
-                          <span class="white--black" v-if="!post.User.imageUrl">
+                          <span class="white--black" v-if="!$store.state.user.imageUrl">
                             ( ͡° ͜ʖ ͡°)
                           </span>
                           <v-img
-                            :src="post.User.imageUrl"
+                            :src="$store.state.user.imageUrl"
                             alt="post.User.name"
-                            v-if="post.User.imageUrl"
+                            v-if="$store.state.user.imageUrl"
                             height="42"
                             max-width="42"
                             contain
