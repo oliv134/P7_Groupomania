@@ -115,6 +115,12 @@ Vous devez avoir un serveur mysql installé en localhost.
 La connexion à ce serveur se fait dans le fichier /backend/config/config.json
 
 Pour la version dev, un profil créé avec le nom admin sera automatiquement administrateur.
+
+Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial).
+L'administrateur peut modérer tout le contenu.
+
+Les fonctions de recherche et d'ajout de gif via giphy ne sont pas encore implémentée.
+
 #### Start
 Pour ce projet, vous excutez le backend via:
    ```sh

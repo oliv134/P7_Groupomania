@@ -28,10 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          is: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z0-9\d@$!%*?&]{8,}$/
-        },
-        msg: "Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial)."
+        
       },
       imageUrl: DataTypes.STRING,
       deleted: {
@@ -55,8 +52,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         beforeUpdate: async (user) => {
           if (user.changed('password')) {
-            
+          
             user.password = await hashPassword(user.password);
+          
           }
         },
         // Effacement de la photo utilisateur si elle a changé
