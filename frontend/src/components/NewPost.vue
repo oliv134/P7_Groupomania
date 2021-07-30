@@ -91,7 +91,7 @@
                 </v-row>
                 <v-divider class="mb-2"></v-divider>
                 <v-row justify="end">
-                  <v-col cols="2" md="3">
+                  <v-col cols="6" md="3">
                     <v-btn
                       color="deep-purple"
                       @click="cancelUpdate"
@@ -100,7 +100,7 @@
                       Annuler
                     </v-btn>
                   </v-col>
-                  <v-col cols="3">
+                  <v-col cols="6" md="4">
                     <v-btn class="" color="info" @click="onSubmit">
                       {{ validText }}
                       <template v-slot:loader>
@@ -186,7 +186,7 @@ export default {
   },
   computed: {
     validText() {
-      return this.update ? "Mettre à jour" : "Poster";
+      return this.update ? "...Poster" : "Poster";
     },
   },
   beforeMount() {

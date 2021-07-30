@@ -329,7 +329,7 @@ export default {
     },
   },
   beforeCreate() {
-    if (this.$store.state.isLoggedIn) {this.$router.push('Posts')} 
+    if (this.$store.state.isLoggedIn) {this.$router.push('/posts')} 
   }
 };
 </script>
