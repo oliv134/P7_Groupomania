@@ -148,10 +148,7 @@
               <v-expand-transition>
                 <v-container v-show="setComment">
                   <v-divider class="mb-3"></v-divider>
-                  <v-form
-                    ref="txtComment"
-                    v-model="valid"
-                  >
+                  <v-form ref="txtComment" v-model="valid">
                     <v-row>
                       <v-col
                         cols="2"
@@ -278,7 +275,6 @@ export default {
       this.$store.dispatch("likePost", this.post.id);
     },
     reportPost() {
-      
       this.$store.dispatch("reportPost", this.post.id);
     },
     toggleComment() {
@@ -288,7 +284,7 @@ export default {
         this.getComments();
         this.$refs.refComment.focus();
       } else {
-        this.$refs.txtComment.reset()
+        this.$refs.txtComment.reset();
       }
     },
     createComment() {

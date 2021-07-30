@@ -2,8 +2,8 @@
   <v-container>
     <v-divider class="mb-2"></v-divider>
     <span class="date ml-5 text-left text-caption font-italic">
-      {{ ownerName }} commenté le {{ localDate
-    }}</span>
+      {{ ownerName }} commenté le {{ localDate }}</span
+    >
     <v-row>
       <v-col cols="10" md="11">
         <p class="font-weight-light mb-1">
@@ -11,11 +11,7 @@
         </p>
       </v-col>
       <v-col cols="2" md="1">
-        <v-btn
-          icon
-          v-if="isOwner"
-          @click="deleteComment"
-        >
+        <v-btn icon v-if="isOwner" @click="deleteComment">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </v-col>
@@ -44,11 +40,14 @@ export default {
       return this.comment.Userid === this.$store.state.user.id;
     },
     localDate() {
-    return moment.utc(this.comment.createdAt).local().format('dddd Do MMM YYYY HH:mm:ss');
+      return moment
+        .utc(this.comment.createdAt)
+        .local()
+        .format("dddd Do MMM YYYY HH:mm:ss");
     },
     ownerName() {
-      return this.isOwner ? 'Vous avez' : this.comment.User.name + ' a';
-    }
+      return this.isOwner ? "Vous avez" : this.comment.User.name + " a";
+    },
   },
   methods: {
     deleteComment() {

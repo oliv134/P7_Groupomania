@@ -52,5 +52,4 @@ db.sequelize
   })
   .then(() => {
     server.listen(port);
-    
   });

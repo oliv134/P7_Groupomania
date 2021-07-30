@@ -179,24 +179,23 @@ exports.createComment = async (req, res) => {
   id = req.params.PostId;
   req.body.PostId = id;
 
-  
   try {
     let post = await Comment.create(req.body);
 
     post = await Post.findOne({
       where: { id: id },
-      order:[
-        [ {model: Comment}, 'createdAt', 'desc'  ]],
+      order: [[{ model: Comment }, "createdAt", "desc"]],
       include: [
         { model: db.User, attributes: ["id", "name", "admin", "imageUrl"] },
         { model: db.Likes, attributes: ["Userid"] },
         { model: db.Reports, attributes: ["Userid"] },
-        { model: db.Comment, attributes: ['id', "Userid", "message", "createdAt"],
-        include: [{ model: db.User, attributes: ["name"] }]
-        }
+        {
+          model: db.Comment,
+          attributes: ["id", "Userid", "message", "createdAt"],
+          include: [{ model: db.User, attributes: ["name"] }],
+        },
       ],
     });
-   
 
     res.status(201).json({ post });
   } catch (error) {
@@ -205,23 +204,22 @@ exports.createComment = async (req, res) => {
 };
 exports.getComments = async (req, res) => {
   try {
-    
-
     id = parseInt(req.params.PostId);
     console.log(id);
 
     post = await Post.findOne({
       where: { id: id },
-      order:[
-        [ {model: Comment}, 'createdAt', 'desc'  ]],
+      order: [[{ model: Comment }, "createdAt", "desc"]],
       include: [
         { model: db.User, attributes: ["id", "name", "admin", "imageUrl"] },
         { model: db.Likes, attributes: ["Userid"] },
         { model: db.Reports, attributes: ["Userid"] },
-        { model: db.Comment, attributes: ['id', "Userid", "message", "createdAt"], 
-        include: [{ model: db.User, attributes: ["name"] }],
+        {
+          model: db.Comment,
+          attributes: ["id", "Userid", "message", "createdAt"],
+          include: [{ model: db.User, attributes: ["name"] }],
         },
-      ]
+      ],
     });
     console.log(post);
 
@@ -242,32 +240,36 @@ exports.deleteComment = async (req, res) => {
       where.UserId = userId;
     }
 
-    let comment = await Comment.findOne({ where , attributes: ["id", "PostId"]});
+    let comment = await Comment.findOne({
+      where,
+      attributes: ["id", "PostId"],
+    });
 
     if (!comment) {
       throw "userId missing";
       ("Vous n'avez pas l'autorisation");
     }
 
-   //req.params.PostId = comment.dataValues.PostId;
+    //req.params.PostId = comment.dataValues.PostId;
 
     await comment.destroy();
-    const postId= req.params.PostId = comment.dataValues.PostId;
+    const postId = (req.params.PostId = comment.dataValues.PostId);
     //post = await this.getComments(req);
     let post = await Post.findOne({
       where: { id: id },
-      order:[
-        [ {model: Comment}, 'createdAt', 'desc'  ]],
+      order: [[{ model: Comment }, "createdAt", "desc"]],
       include: [
         { model: db.User, attributes: ["id", "name", "admin", "imageUrl"] },
         { model: db.Likes, attributes: ["Userid"] },
         { model: db.Reports, attributes: ["Userid"] },
-        { model: db.Comment, attributes: ['id', "Userid", "message", "createdAt"],
-        include: [{ model: db.User, attributes: ["name"] }]
-        }
+        {
+          model: db.Comment,
+          attributes: ["id", "Userid", "message", "createdAt"],
+          include: [{ model: db.User, attributes: ["name"] }],
+        },
       ],
     });
-    console.log('destroy')
+    console.log("destroy");
     res.status(201).json({ post });
   } catch (error) {
     res.status(500).json({ error: error.message });

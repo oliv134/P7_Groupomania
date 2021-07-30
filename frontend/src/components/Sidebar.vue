@@ -74,18 +74,17 @@ export default {
   data: (e) => ({
     mini: true,
     items: [
-      { icon: 
-        "mdi-contacts",
+      {
+        icon: "mdi-contacts",
         title: "Mon profil",
         action: () => {},
         to: "/user",
       },
-            {
+      {
         icon: "mdi-chat",
         title: "Retour aux Posts",
         action: () => {},
         to: "/",
-        
       },
       {
         icon: "mdi-logout",
@@ -94,14 +93,13 @@ export default {
           e.logOut();
         },
         to: "/",
-        
-      }
+      },
     ],
   }),
   methods: {
     logOut: function () {
       this.$store.dispatch("logOut");
-      this.$router.push('/');
+      this.$router.push("/");
     },
   },
 };

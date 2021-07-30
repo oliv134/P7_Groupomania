@@ -34,12 +34,11 @@ app.use((req, res, next) => {
 });
 //for handling form data
 
-
 app.use(express.json()); // replace app.use(bodyParser.json()) who's deprecated!!
 app.use(express.urlencoded({ extended: true }));
 // for parsing multipart/form-data
-//app.use(upload.array()); 
-app.use(express.static('public'));
+//app.use(upload.array());
+app.use(express.static("public"));
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/users", userRoutes);
