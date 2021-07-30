@@ -7,8 +7,9 @@ export default {
   login(data) {
     return Api().post("users/login", data);
   },
-  deleteUser(id) {
-    return Api().delete("users/accounts/" + id);
+  deleteUser(id = null) {
+    id = id == null ? this.$store.state.user.id : id
+    return Api().delete("users/account/" + id);
   },
   updateUser(id, data) {
     return Api().put("users/accounts/" + id, data);

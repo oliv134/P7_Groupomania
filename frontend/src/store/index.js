@@ -138,6 +138,8 @@ export default new Vuex.Store({
     logOut({ commit }) {
       commit("LOG_OUT");
     },
+
+  
     // **** Posts
     createPost({ commit }, post) {
       PostService.createPost(post).then((response) => {

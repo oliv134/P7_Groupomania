@@ -2,7 +2,6 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Posts from "../views/Posts.vue";
-import Giphy from "../components/addGif.vue";
 import User from "../views/User.vue";
 Vue.use(VueRouter);
 
@@ -16,11 +15,6 @@ const routes = [
     path: "/posts",
     name: "posts",
     component: Posts,
-  },
-  {
-    path: "/gif",
-    name: "gif",
-    component: Giphy,
   },
   {
     path: "/user",

@@ -48,9 +48,36 @@
                 >
               </div>
               <div class="text-center mt-6">
-                <v-btn rounded dark @click="delUser" class="mb-3"
-                  >Supprimer mon profil</v-btn
-                >
+                <v-dialog v-model="dialog" persistent max-width="290">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      rounded
+                      dark
+                      class="mb-3"
+                      v-bind="attrs"
+                      v-on="on"
+                      >Supprimer mon profil</v-btn
+                    >
+                  </template>
+                  <v-card>
+                    <v-card-title class="headline"
+                      >Attention !</v-card-title
+                    >
+                    <v-card-text
+                      >La suppression du compte est irreversible.
+                      Souhaitez vous continuez ?</v-card-text
+                    >
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="red darken-1" text @click="dialog = false"
+                        >Non</v-btn
+                      >
+                      <v-btn color="green darken-1" text @click="delUser"
+                        >Oui</v-btn
+                      >
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
               </div>
             </v-col>
 
@@ -109,15 +136,14 @@
           </v-row>
         </v-card>
       </v-col>
+      
     </v-row>
-    <Modal></Modal>
-
+    
   </v-container>
 </template>
 
 <script>
 import Auth from "../services/Auth.js";
-import {Modal} from "@/components/modal.vue";
 export default {
   data() {
     return {
@@ -131,6 +157,8 @@ export default {
       errorMessage: null,
       isValid: true,
       message: null,
+      dialog: false,
+      back: false
     };
   },
 
@@ -176,18 +204,12 @@ export default {
       }
     },
     async delUser() {
-      const modalParam = {
-        title: 'ATTENTION',
-        texte: 'Souhaitez vous réllement supprimer définitivement votre compte ? Cette opération est irrevesible !!!',
-        yesButton: 'Oui',
-        noButton: 'Non'
-      }
-      this.openModal(modalParam)
+      await Auth.deleteUser(this.$store.state.user.id)
+      this.dialog=false;
+      this.$store.dispatch("logOut");
+      this.$router.push('/');
     },
-    openModal (modalParam) {
-      Modal.$emit('modalParam', modalParam)
-      Modal.$emit('dialog', true)
-    }
+   
   },
   beforeCreate() {
     if (!this.$store.state.isLoggedIn) {

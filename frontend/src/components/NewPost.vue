@@ -169,6 +169,7 @@ export default {
         this.$store
           .dispatch("updatePost", { postId: this.postId, formData: formData })
           .then(this.$emit("updatePost"));
+          
       } else {
         if (this.imageSrc) {
           formData.append("image", this.imageSrc);
