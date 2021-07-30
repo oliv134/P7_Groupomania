@@ -78,6 +78,11 @@ Le backend utilise:
 * [mysql](https://www.mysql.com/fr/)
 * [sequelize](https://sequelize.org/)
 
+Le backend utilise: 
+* [vuejs](https://vuejs.org/)
+* [vuetify](https://vuetifyjs.com/)
+* [axios](https://axios-http.com/)
+
 <!-- GETTING STARTED -->
 ## Getting Started
 
