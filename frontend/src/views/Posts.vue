@@ -29,7 +29,6 @@ export default {
   },
   computed: {
     posts() {
-      //console.log(this.$store.getters.posts);
       return this.$store.getters.posts;
     },
   },
@@ -40,6 +39,9 @@ export default {
     deletePost(id) {
       this.$store.dispatch("deletePost", id);
     }
+  },
+    beforeCreate() {
+    if (!this.$store.state.isLoggedIn) {this.$router.push('Home')} 
   }
 };
 </script>

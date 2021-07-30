@@ -28,7 +28,6 @@ exports.setToken = (user) => {
   token = jwt.sign(payload, process.env.TOKEN_KEY, {
     expiresIn: process.env.TOKEN_EXPIRE,
   });
-  console.log("middleware/Auth:token: " + token);
   return "Bearer " + token;
   /*return {
     token: signedToken,
@@ -42,12 +41,10 @@ exports.getToken = (req) => {
 exports.getTokenUserId = (req) => {
   // on vérifie le userId du token
   const decodedToken = jwt.verify(this.getToken(req), process.env.TOKEN_KEY); // on le vérifie
-  console.log(decodedToken)
   return decodedToken.userId;; // on récupère l'id du token
 };
 exports.checkUser = (req) => {
   // vérifie si l'id du user passé dans le header est correct
-  console.log(req.headers.userid);
   return this.getTokenUserId(req) === req.headers.userid
 
 }

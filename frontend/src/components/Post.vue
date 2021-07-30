@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid align-content-xs-start align-content-mg-center class="mt-8"
+  <v-container fluid align-content-xs-start align-content-lg-center class="mt-8"
     ><NewPost
       v-if="update"
       :postId="post.id"
@@ -15,21 +15,18 @@
           <v-row>
             <v-col cols="2" md="1" class="text-center px-0">
               <v-avatar color="indigo">
-                <span class="white--text headline" v-if="!post.User.imageUrl">
-                  X
+                <span class="white--text" v-if="!post.User.imageUrl">
+                  ( ͡° ͜ʖ ͡°)
                 </span>
                 <v-img
                   v-if="post.User.imageUrl"
                   :src="post.User.imageUrl"
                   :alt="post.User.name"
-                  height="30"
-                  max-width="30"
-                  contain
                 >
                 </v-img>
               </v-avatar>
             </v-col>
-            <v-col cols="10" md="11" class="grey lighten-4 px-md-6 px-3">
+            <v-col cols="10" md="11" class="grey lighten-4 px-lg-6 px-3">
               <v-row>
                 <v-col cols="10">
                   <v-card-title class="pt-0">{{ post.User.name }}</v-card-title>
@@ -38,13 +35,24 @@
                   </v-card-subtitle>
                 </v-col>
                 <v-col cols="2">
-                  <v-btn icon v-if="isOwner" @click="updatePost">
-                    <v-icon>mdi-pen</v-icon>
-                  </v-btn>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        icon
+                        v-bind="attrs"
+                        v-on="on"
+                        v-if="isOwner"
+                        @click="updatePost"
+                      >
+                        <v-icon>mdi-pen</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Modifier</span>
+                  </v-tooltip>
                 </v-col>
               </v-row>
-              <v-divider class="mb-3"></v-divider>
-              <div class="text-truncate" style="max-height: 130px">
+              <v-divider class="mb-3 text-body-1"></v-divider>
+              <div>
                 {{ post.content }}
               </div>
               <v-img
@@ -57,69 +65,154 @@
               </v-img>
               <v-row class="my-1">
                 <v-col cols="3" sm="3">
-                  <v-btn icon @click.prevent="toggleComment">
-                    <v-icon>mdi-message-reply-text</v-icon>
-                  </v-btn>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        icon
+                        v-bind="attrs"
+                        v-on="on"
+                        @click.prevent="toggleComment"
+                      >
+                        <v-icon>mdi-message-reply-text</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Commenter</span>
+                  </v-tooltip>
                 </v-col>
 
                 <v-col cols="3" sm="3">
-                  <v-btn icon>
-                    <v-icon>mdi-thumb-up-outline</v-icon>
-                  </v-btn>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-badge
+                        :content="likesCount"
+                        :value="likesCount"
+                        :v-show="likesCount"
+                        label="Nombre de Likes"
+                        color="green"
+                        overlap
+                      >
+                        <v-btn icon v-bind="attrs" v-on="on" @click="likePost">
+                          <v-icon>mdi-thumb-up-outline</v-icon>
+                        </v-btn>
+                      </v-badge>
+                    </template>
+                    <span>Liker</span>
+                  </v-tooltip>
                 </v-col>
 
                 <v-col cols="3" sm="3">
-                  <v-btn icon>
-                    <v-icon>mdi-alert-circle-outline</v-icon>
-                  </v-btn>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-badge
+                        :content="reportsCount"
+                        :value="reportsCount"
+                        :v-show="reportsCount"
+                        label="Nombre de signalements"
+                        color="orange"
+                        overlap
+                      >
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="reportPost"
+                        >
+                          <v-icon>mdi-alert-circle-outline</v-icon>
+                        </v-btn>
+                      </v-badge>
+                    </template>
+                    <span>Signaler</span>
+                  </v-tooltip>
                 </v-col>
 
                 <v-col cols="3" sm="3">
-                  <v-btn icon v-if="isOwner || isAdmin" @click="deletePost">
-                    <v-icon>mdi-close-octagon-outline</v-icon>
-                  </v-btn>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        icon
+                        v-bind="attrs"
+                        v-on="on"
+                        v-if="isOwner || isAdmin"
+                        @click="deletePost"
+                      >
+                        <v-icon>mdi-close-octagon-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Supprimer</span>
+                  </v-tooltip>
                 </v-col>
+                <span class="date ml-5 text-left text-caption font-italic">{{
+                  localDate
+                }}</span>
               </v-row>
               <v-expand-transition>
-              <v-container v-show="setComment">
-                <v-divider class="mb-3"></v-divider>
-                <v-row>
-                  <v-col cols="2" md="1" class="text-center px-0">
-                    <v-avatar>
-                      <v-img
-                        src="https://randomuser.me/api/portraits/men/78.jpg"
-                        alt="John"
-                        height="30"
-                        max-width="30"
-                        contain
+                <v-container v-show="setComment">
+                  <v-divider class="mb-3"></v-divider>
+                  <v-form
+                    ref="txtComment"
+                    v-model="valid"
+                  >
+                    <v-row>
+                      <v-col
+                        cols="2"
+                        md="1"
+                        class="text-center px-0"
+                        v-if="$vuetify.breakpoint.lgAndUp"
                       >
-                      </v-img>
-                    </v-avatar>
-                  </v-col>
+                        <v-avatar color="white">
+                          <span class="white--black" v-if="!post.User.imageUrl">
+                            ( ͡° ͜ʖ ͡°)
+                          </span>
+                          <v-img
+                            :src="post.User.imageUrl"
+                            alt="post.User.name"
+                            v-if="post.User.imageUrl"
+                            height="42"
+                            max-width="42"
+                            contain
+                          >
+                          </v-img>
+                        </v-avatar>
+                      </v-col>
 
-                  <v-col>
-                    <v-textarea
-                      label="Votre commentaire"
-                      ref="txtComment"
-                      auto-grow
-                      outlined
-                      rows="1"
-                      row-height="15"
-                    >
-                    </v-textarea>
-                  </v-col>
-                </v-row>
-                <p class="text-lg-right">
-                  <v-btn class="" color="info">
-                    Ok !
-                    <template v-slot:loader>
-                      <span class="custom-loader">
-                        <v-icon light>mdi-cached</v-icon>
-                      </span>
-                    </template>
-                  </v-btn>
-                </p>
-              </v-container>
+                      <v-col>
+                        <v-textarea
+                          label="Votre commentaire"
+                          auto-grow
+                          outlined
+                          rows="1"
+                          row-height="15"
+                          :rules="[rules.required]"
+                          v-model="txtComment"
+                          required
+                          ref="refComment"
+                        >
+                        </v-textarea>
+                      </v-col>
+                      <v-col cols="4" md="2">
+                        <v-btn
+                          :disabled="!valid"
+                          color="info"
+                          @click.prevent="createComment"
+                        >
+                          Ok !
+                          <template v-slot:loader>
+                            <span class="custom-loader">
+                              <v-icon light>mdi-cached</v-icon>
+                            </span>
+                          </template>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-form>
+
+                  <Comment
+                    v-for="comment of post.Comments"
+                    :key="comment.id"
+                    :comment="comment"
+                  >
+                  </Comment>
+                </v-container>
               </v-expand-transition>
             </v-col>
           </v-row>
@@ -131,14 +224,23 @@
 
 <script>
 import NewPost from "@/components/NewPost.vue";
+import Comment from "@/components/Comment.vue";
+import moment from "moment";
 export default {
   name: "Posts",
   components: {
     NewPost,
+    Comment,
   },
   data: () => ({
     update: false,
+    txtComment: null,
+    valid: false,
     setComment: false,
+    rules: {
+      required: (value) =>
+        !!value || "Il faut quand même écrire quelque chose.",
+    },
   }),
   props: {
     post: {
@@ -152,6 +254,18 @@ export default {
     isAdmin() {
       return this.$store.state.user.admin;
     },
+    reportsCount() {
+      return this.post.Reports.length;
+    },
+    likesCount() {
+      return this.post.Likes.length;
+    },
+    localDate() {
+      return moment
+        .utc(this.post.createdAt)
+        .local()
+        .format("dddd Do MMM YYYY HH:mm:ss");
+    },
   },
   methods: {
     deletePost() {
@@ -160,11 +274,42 @@ export default {
     updatePost(update = true) {
       this.update = update;
     },
+    likePost() {
+      this.$store.dispatch("likePost", this.post.id);
+    },
+    reportPost() {
+      
+      this.$store.dispatch("reportPost", this.post.id);
+    },
     toggleComment() {
-      this.setComment = !this.setComment
-      if (this.setComment) {this.$refs.txtComment.focus()}
-                         
-    }
+      this.setComment = !this.setComment;
+
+      if (this.setComment) {
+        this.getComments();
+        this.$refs.refComment.focus();
+      } else {
+        this.$refs.txtComment.reset()
+      }
+    },
+    createComment() {
+      const formData = new FormData();
+      formData.append("message", this.txtComment);
+      this.$store.dispatch("createComment", {
+        postId: this.post.id,
+        formData: formData,
+      });
+      this.$refs.txtComment.reset();
+    },
+    getComments() {
+      this.$store.dispatch("getComments", {
+        postId: this.post.id,
+      });
+    },
+    deleteComment() {
+      this.$store.dispatch("deleteComment", {
+        id: this.comment.id,
+      });
+    },
   },
 };
 </script>

@@ -53,6 +53,7 @@
         link
         @click.stop="item.action"
         :to="item.to"
+        :v-if="item.vif"
       >
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
@@ -67,13 +68,25 @@
 </template>
 <script>
 export default {
-  name: "Header",
+  name: "Sidebar",
   dialog: false,
 
   data: (e) => ({
     mini: true,
     items: [
-      { icon: "mdi-contacts", title: "Mon profil" },
+      { icon: 
+        "mdi-contacts",
+        title: "Mon profil",
+        action: () => {},
+        to: "/user",
+      },
+            {
+        icon: "mdi-chat",
+        title: "Retour aux Posts",
+        action: () => {},
+        to: "/",
+        
+      },
       {
         icon: "mdi-logout",
         title: "Déconnexion",
@@ -81,12 +94,12 @@ export default {
           e.logOut();
         },
         to: "/",
-      },
+        
+      }
     ],
   }),
   methods: {
     logOut: function () {
-      console.log("logout");
       this.$store.dispatch("logOut");
     },
   },

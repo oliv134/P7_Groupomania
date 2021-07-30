@@ -4,37 +4,34 @@
     app
     color="blue darken-3"
     dark
-    v-if="$store.state.isLoggedIn"
   >
-    <v-badge
-      :content="messages"
-      :value="messages"
-      color="green"
-      overlap
-      v-if="!$vuetify.breakpoint.lgAndUp"
-    >
-      <v-avatar @click.stop="$store.state.drawer = !$store.state.drawer">
+
+      <v-avatar @click.stop="$store.state.drawer = !$store.state.drawer"
+      v-if="!$vuetify.breakpoint.lgAndUp">
         <v-img
           class=""
           src="@/assets/icon-left-font-monochrome-white_mini.svg"
           max-height="40"
           max-width="100"
           contain
+          
         >
         </v-img>
       </v-avatar>
-    </v-badge>
+
 
     <v-toolbar-title class="ml-3 text-uppercase">
-      <v-img
-        class=""
-        src="@/assets/icon-left-font-monochrome-white.svg"
-        max-height="60"
-        max-width="140"
-        contain
-        v-show="$vuetify.breakpoint.lgAndUp"
-      >
-      </v-img>
+      <router-link to="/">
+        <v-img
+          class=""
+          src="@/assets/icon-left-font-monochrome-white.svg"
+          max-height="60"
+          max-width="140"
+          contain
+          v-if="$vuetify.breakpoint.lgAndUp"
+        >
+        </v-img>
+      </router-link>
     </v-toolbar-title>
 
     <v-spacer></v-spacer>
@@ -43,6 +40,7 @@
       @focus="switchReducer()"
       @blur="switchReducer()"
       :class="{ closed: searchReduced }"
+      v-if="$store.state.isLoggedIn"
       placeholder="Recherche"
       prepend-inner-icon="mdi-magnify"
       hide-details
@@ -52,33 +50,16 @@
     >
     </v-text-field>
 
-    <v-btn
-      v-if="$vuetify.breakpoint.lgAndUp"
-      class="mx-2"
-      fab
-      dark
-      small
-      color="cyan"
-    >
-      <v-icon dark> mdi-pencil </v-icon>
-    </v-btn>
 
-    <v-badge
-      :content="messages"
-      :value="messages"
-      color="green"
-      overlap
-      v-if="$vuetify.breakpoint.lgAndUp"
-    >
+
+  
       <v-avatar
         @click.stop="$store.state.drawer = !$store.state.drawer"
         color="indigo"
+        v-if="$vuetify.breakpoint.lgAndUp"
       >
-        <span
-          class="white--text headline"
-          v-if="!$store.state.user.imageUrl"
-        >
-          {{$store.state.user.initial}}
+        <span class="white--text headline" v-if="!$store.state.user.imageUrl">
+          {{ $store.state.user.initial }}
         </span>
         <v-img
           v-if="$store.state.user.imageUrl"
@@ -88,7 +69,7 @@
         </v-img>
         <!-- <span class="white--text text-h5">CJ</span> -->
       </v-avatar>
-    </v-badge>
+    
   </v-app-bar>
 </template>
 <script>

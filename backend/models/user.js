@@ -5,7 +5,9 @@ const bcrypt = require('bcrypt')
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate (models) {
-      User.hasMany(models.Post, { foreignKey: 'userId' })
+      User.hasMany(models.Post, { foreignKey: 'userId' });
+      User.hasMany(models.Comment);
+      User.hasMany(models.Likes);
     }
   }
   User.init(
@@ -52,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
           }
         },
         beforeUpdate: async (user) => {
-          if (user.password) {
+          if (user.changed('password')) {
             
             user.password = await hashPassword(user.password);
           }

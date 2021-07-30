@@ -9,6 +9,5 @@ export default () => {
       Authorization: `${store.state.token}`,
       userId: `${store.state.user.id}`
     },
-    
   });
 };

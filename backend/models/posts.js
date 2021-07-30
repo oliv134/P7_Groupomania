@@ -11,9 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate (models) {
-      Post.belongsTo(models.User, { foreignKey: 'userId' })
-      //Post.hasMany(models.Comments)
-      //Post.hasMany(models.Likes)
+      models.Post.belongsTo(models.User, { foreignKey: 'userId' }),
+      models.Post.hasMany(models.Comment),
+      models.Post.hasMany(models.Likes),
+      models.Post.hasMany(models.Reports)
     }
     readableCreatedAt () {
       return moment(this.createdAt)
@@ -23,10 +24,27 @@ module.exports = (sequelize, DataTypes) => {
   }
   Post.init(
     {
-      userId: DataTypes.INTEGER,
-      content: DataTypes.TEXT,
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      content: {
+        type: DataTypes.TEXT,
+        allowNull: false
+      },
       imageUrl: DataTypes.STRING,
-      likesCount: DataTypes.INTEGER
+      likesCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
+      reportsCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
+      banned: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      }
     },
     {
       sequelize,

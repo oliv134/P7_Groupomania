@@ -10,25 +10,29 @@
         <v-card class="elevation-6">
           <v-row>
             <v-col cols="2" md="1" class="text-center px-0">
-              <v-avatar color="indigo">
+              <v-avatar
+                @click.stop="$store.state.drawer = !$store.state.drawer"
+                color="indigo"
+              >
                 <span
                   class="white--text headline"
-                  v-if="!$store.state.user.imageSrc"
+                  v-if="!$store.state.user.imageUrl"
                 >
                   {{ $store.state.user.initial }}
                 </span>
                 <v-img
-                  v-if="$store.state.user.imageSrc"
-                  src="$store.state.user.imageSrc"
-                  alt="John"
-                  height="30"
-                  max-width="30"
+                  v-if="$store.state.user.imageUrl"
+                  :src="$store.state.user.imageUrl"
+                  :alt="$store.state.user.name"
+                  height="40"
+                  max-width="40"
                   contain
                 >
                 </v-img>
+                <!-- <span class="white--text text-h5">CJ</span> -->
               </v-avatar>
             </v-col>
-            <v-col cols="10" md="11" class="grey lighten-5 px-md-6 px-3">
+            <v-col cols="10" md="11" class="grey lighten-5 px-lg-6 px-3">
               <v-form
                 ref="postForm"
                 @submit.prevent="onSubmit"
@@ -54,12 +58,22 @@
                 ></v-img>
                 <v-row class="">
                   <v-col class="" cols="2" sm="1">
-                    <v-btn icon @click="addImage" v-if="!imageUrl">
-                      <v-icon>mdi-image</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="delImage" v-if="imageUrl">
-                      <v-icon color="red">mdi-image-off-outline</v-icon>
-                    </v-btn>
+                    <v-tooltip bottom v-if="!imageUrl">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn icon v-bind="attrs" v-on="on" @click="addImage">
+                          <v-icon>mdi-image</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Ajouter une image</span>
+                    </v-tooltip>
+                    <v-tooltip bottom v-if="imageUrl">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn icon v-bind="attrs" v-on="on" @click="delImage">
+                          <v-icon color="red">mdi-image-off-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Retirer l'image</span>
+                    </v-tooltip>
                   </v-col>
 
                   <v-col class="" cols="2" sm="1">
@@ -77,8 +91,14 @@
                 </v-row>
                 <v-divider class="mb-2"></v-divider>
                 <v-row justify="end">
-                  <v-col cols="2">
-                    <v-btn color="deep-purple" @click="cancelMod" v-if="imageUrl || content"> Annuler </v-btn>
+                  <v-col cols="2" md="3">
+                    <v-btn
+                      color="deep-purple"
+                      @click="cancelUpdate"
+                      v-if="imageUrl || content"
+                    >
+                      Annuler
+                    </v-btn>
                   </v-col>
                   <v-col cols="3">
                     <v-btn class="" color="info" @click="onSubmit">
@@ -156,14 +176,13 @@ export default {
         this.$store.dispatch("createPost", formData).then();
         this.delImage();
         this.$refs.postForm.reset();
-        
       }
     },
-    cancelMod() {
+    cancelUpdate() {
       this.delImage();
-      this.$refs.postForm.reset()
+      this.$refs.postForm.reset();
       this.$emit("updatePost");
-    }
+    },
   },
   computed: {
     validText() {
