@@ -114,6 +114,7 @@ Vous devez avoir npm d'installé sur votre système.
 Vous devez avoir un serveur mysql installé en localhost.
 La connexion à ce serveur se fait dans le fichier /backend/config/config.json
 
+Pour la version dev, un profil créé avec le nom admin sera automatiquement administrateur.
 #### Start
 Pour ce projet, vous excutez le backend via:
    ```sh
