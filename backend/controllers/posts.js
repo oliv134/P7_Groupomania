@@ -52,8 +52,8 @@ exports.getAllPosts = async (req, res, next) => {
       { model: db.Likes, attributes: ["Userid"] },
       { model: db.Reports, attributes: ["Userid"] },
     ],
-    limit,
-    offset: limit * (page - 1),
+    //limit,
+    //offset: limit * (page - 1),
     order: [["createdAt", "DESC"]],
   };
 
