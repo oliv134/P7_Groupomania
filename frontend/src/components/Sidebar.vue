@@ -5,7 +5,7 @@
     temporary
     :right="$vuetify.breakpoint.lgAndUp"
     app
-    v-if="$store.state.isLoggedIn"
+    v-if="$store.state.user.isLoggedIn"
   >
     <v-list>
       <v-list-item
@@ -92,14 +92,14 @@ export default {
         action: () => {
           e.logOut();
         },
-        to: "/",
+        
       },
     ],
   }),
   methods: {
     logOut: function () {
-      this.$store.dispatch("logOut");
-      this.$router.push("/");
+    this.$store.dispatch("logOut");
+    this.$router.push("/");
     },
   },
 };

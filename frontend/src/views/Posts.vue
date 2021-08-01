@@ -7,12 +7,12 @@
   >
     <NewPost />
 
-    <Post 
-    v-for="post of posts"
+    <Post
+      v-for="post of posts"
       :key="post.id"
       :post="post"
       @deletePost="deletePost(post.id)"
-      >
+    >
     </Post>
   </v-container>
 </template>
@@ -33,15 +33,18 @@ export default {
     },
   },
   beforeMount() {
-    this.$store.dispatch("getPosts");
+    if (!this.$store.state.user.isLoggedIn) {
+      this.$router.push({ name: "home" });
+    } else {
+      this.$store.dispatch("getPosts");
+    }
+    console.log(this.$store.state.user.isLoggedIn)
   },
   methods: {
     deletePost(id) {
       this.$store.dispatch("deletePost", id);
-    }
+    },
   },
-    beforeCreate() {
-    if (!this.$store.state.isLoggedIn) {this.$router.push('/')} 
-  }
+  beforeCreate() {},
 };
 </script>

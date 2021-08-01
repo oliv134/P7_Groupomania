@@ -314,6 +314,7 @@ export default {
           email: this.email,
           password: this.password,
         });
+        console.log(response)
         this.message = response.data.message;
         this.$store.dispatch("setToken", response.data.token);
         this.$store.dispatch("setUser", response.data.user);
@@ -329,7 +330,7 @@ export default {
     },
   },
   beforeCreate() {
-    if (this.$store.state.isLoggedIn) {this.$router.push('/posts')} 
+    if (this.$store.state.user.isLoggedIn) {this.$router.push('/posts')} 
   }
 };
 </script>

@@ -7,7 +7,9 @@ const user = require("../controllers/user");
 
 exports.createPost = async (req, res, next) => {
   req.body.userId = auth.getTokenUserId(req);
+  
   req.body.imageUrl = req.file
+
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
   try {

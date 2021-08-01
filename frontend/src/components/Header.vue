@@ -12,6 +12,7 @@
       <v-img
         class=""
         src="@/assets/icon-left-font-monochrome-white_mini.svg"
+        alt="logo groupomania"
         max-height="40"
         max-width="100"
         contain
@@ -24,6 +25,7 @@
         <v-img
           class=""
           src="@/assets/icon-left-font-monochrome-white.svg"
+          alt="logo groupomania"
           max-height="60"
           max-width="140"
           contain
@@ -39,7 +41,7 @@
       @focus="switchReducer()"
       @blur="switchReducer()"
       :class="{ closed: searchReduced }"
-      v-if="$store.state.isLoggedIn"
+      v-if="$store.state.user.isLoggedIn"
       placeholder="Recherche"
       prepend-inner-icon="mdi-magnify"
       hide-details
@@ -52,7 +54,7 @@
     <v-avatar
       @click.stop="$store.state.drawer = !$store.state.drawer"
       color="indigo"
-      v-if="$vuetify.breakpoint.lgAndUp && $store.state.isLoggedIn"
+      v-if="$vuetify.breakpoint.lgAndUp && $store.state.user.isLoggedIn"
     >
       <span class="white--text headline" v-if="!$store.state.user.imageUrl">
         {{ $store.state.user.initial }}
@@ -83,18 +85,6 @@ export default {
   methods: {
     switchReducer() {
       this.searchReduced = !this.searchReduced;
-    },
-  },
-  computed: {
-    logoImg: function () {
-      console.log(
-        this.$vuetify.breakpoint.name == "xs"
-          ? "@/assets/icon-left-font-monochrome-white-mini.svg"
-          : "@/assets/icon-left-font-monochrome-white.svg"
-      );
-      return this.$vuetify.breakpoint.name == "xs"
-        ? "../assets/icon-left-font-monochrome-white.svg"
-        : "../assets/icon-left-font-monochrome-white.svg";
     },
   },
 };

@@ -212,7 +212,7 @@ export default {
    
   },
   beforeCreate() {
-    if (!this.$store.state.isLoggedIn) {
+    if (!this.$store.state.user.isLoggedIn) {
       this.$router.push("/");
     }
   },

@@ -5,6 +5,7 @@ const { User } = db.sequelize.models;
 // Middleware used for validate authentication on all routes
 exports.checkToken = (req, res, next) => {
   try {
+    console.log(req.headers)
     const userId = req.headers.userid;
     const tokenUserId = this.getTokenUserId(req);
     if (userId && userId != tokenUserId) {

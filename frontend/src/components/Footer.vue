@@ -4,7 +4,7 @@
     app
     hide-on-scroll
     horizontal
-    v-if="!$vuetify.breakpoint.lgAndUp && $store.state.isLoggedIn"
+    v-if="!$vuetify.breakpoint.lgAndUp && $store.state.user.isLoggedIn"
   >
     <v-btn text color="deep-purple accent-4">
       <span>Recents</span>

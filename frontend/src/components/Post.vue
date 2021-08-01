@@ -43,11 +43,12 @@
                         v-on="on"
                         v-if="isOwner"
                         @click="updatePost"
+                        :aria-label="ariaEdit"
                       >
                         <v-icon>mdi-pen</v-icon>
                       </v-btn>
                     </template>
-                    <span>Modifier</span>
+                    <span>Editer</span>
                   </v-tooltip>
                 </v-col>
               </v-row>
@@ -58,7 +59,7 @@
               <v-img
                 v-if="post.imageUrl"
                 :src="post.imageUrl"
-                alt="J"
+                :alt="post.imageUrl"
                 max-height="300"
                 class="rounded-lg"
               >
@@ -72,6 +73,7 @@
                         v-bind="attrs"
                         v-on="on"
                         @click.prevent="toggleComment"
+                        :aria-label="ariaComment"
                       >
                         <v-icon>mdi-message-reply-text</v-icon>
                       </v-btn>
@@ -91,7 +93,7 @@
                         color="green"
                         overlap
                       >
-                        <v-btn icon v-bind="attrs" v-on="on" @click="likePost">
+                        <v-btn icon v-bind="attrs" v-on="on" @click="likePost" :aria-label="ariaLike">
                           <v-icon>mdi-thumb-up-outline</v-icon>
                         </v-btn>
                       </v-badge>
@@ -116,6 +118,7 @@
                           v-bind="attrs"
                           v-on="on"
                           @click="reportPost"
+                          :aria-label="ariaReport"
                         >
                           <v-icon>mdi-alert-circle-outline</v-icon>
                         </v-btn>
@@ -134,6 +137,7 @@
                         v-on="on"
                         v-if="isOwner || isAdmin"
                         @click="deletePost"
+                        :aria-label="ariaDelete"
                       >
                         <v-icon>mdi-close-octagon-outline</v-icon>
                       </v-btn>
@@ -263,6 +267,22 @@ export default {
         .local()
         .format("dddd Do MMM YYYY HH:mm:ss");
     },
+    ariaComment() {
+      return "Commenter ce post numéro " + this.post.id;
+    },
+    ariaLike() {
+      return "Aimrer ce post numéro " + this.post.id;
+    },
+    ariaReport() {
+      return "Signaler ce post numéro " + this.post.id;
+    },
+    ariaDelete() {
+      return "Effacer ce post numéro " + this.post.id;
+    },
+    ariaEdit() {
+      return "Editer ce post numéro " + this.post.id;
+    }
+
   },
   methods: {
     deletePost() {

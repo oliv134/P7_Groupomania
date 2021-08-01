@@ -1,22 +1,21 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import user from "./user"
 import createPersistedState from "vuex-persistedstate";
-import Auth from "../services/Auth";
 import PostService from "../services/PostService";
+
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    token: null,
-    user: {},
-    isLoggedIn: false,
+
     isLoading: false,
     drawer: false,
     message: "",
     error: "",
     posts: [],
-    users: [],
+
     post: {},
   },
   plugins: [
@@ -33,17 +32,6 @@ export default new Vuex.Store({
       return state.post;
     },
 
-    // **** Users
-    users(state) {
-      return state.users;
-    },
-    user(state) {
-      return state.user;
-    },
-    isLogged(state) {
-      return state.isLoggedIn;
-    },
-
     // **** message
     messageRetour(state) {
       return state.message;
@@ -54,36 +42,11 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    // **** users
-    SET_TOKEN(state, token) {
-      if (token) {
-        state.token = token;
-        state.isLoggedIn = true;
-      } else {
-        state.token = null;
-        state.isLoggedIn = false;
-      }
-    },
-    DELETE_TOKEN(state) {
-      state.token = null;
-      state.user = "";
-      state.isLoggedIn = false;
-    },
-    SET_USER(state, user) {
-      state.user = user;
-    },
-    LOG_OUT(state) {
-      sessionStorage.clear();
-      state.token = null;
-      state.user = {};
-      state.isLoggedIn = false;
-      state.message = "";
-      state.error = "";
-    },
+  
     // **** posts
 
     GET_POSTS(state, posts) {
-      (state.posts = posts), (state.isLoading = false);
+      (state.posts = posts), (state.user.isLoading = false);
       // tri par id
       state.posts.sort(function compare(a, b) {
         if (a.id < b.id)
@@ -115,31 +78,6 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    // **** users
-    setToken({ commit }, token) {
-      commit("SET_TOKEN", token);
-    },
-    setUser({ commit }, user) {
-      // ajout de l'id du user dans le store pour la vérification token + userId dans le backend (injection de l'id dans le header de la requete)
-      commit("SET_USER", user);
-
-      // ensuite mise à jour de user dans le store avec toutes les informations
-      Auth.getUserById(user.id).then((response) => {
-        const user = response.data.user;
-        if (user.name) {
-          user.initial = user.name.substring(0, 1).toUpperCase();
-        }
-
-        //user.password = undefined;
-        commit("SET_USER", user);
-      });
-    },
-    
-    logOut({ commit }) {
-      commit("LOG_OUT");
-    },
-
-  
     // **** Posts
     createPost({ commit }, post) {
       PostService.createPost(post).then((response) => {
@@ -223,5 +161,7 @@ export default new Vuex.Store({
       );
     }
   },
-  modules: {},
+  modules: {
+    user
+  },
 });

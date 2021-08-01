@@ -48,6 +48,7 @@
                   v-model="content"
                   :rules="[rules.required]"
                   class="input-group--focused"
+                  aria-label="Contenu du nouveau post"
                 >
                 </v-textarea>
                 <v-img
@@ -55,12 +56,13 @@
                   max-height="300"
                   :src="imageUrl"
                   v-if="imageUrl"
+                  :alt="imageUrl"
                 ></v-img>
                 <v-row class="">
                   <v-col class="" cols="2" sm="1">
                     <v-tooltip bottom v-if="!imageUrl">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon v-bind="attrs" v-on="on" @click="addImage">
+                        <v-btn icon v-bind="attrs" v-on="on" @click="addImage" aria-label="Ajouter une image">
                           <v-icon>mdi-image</v-icon>
                         </v-btn>
                       </template>
@@ -68,7 +70,7 @@
                     </v-tooltip>
                     <v-tooltip bottom v-if="imageUrl">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon v-bind="attrs" v-on="on" @click="delImage">
+                        <v-btn icon v-bind="attrs" v-on="on" @click="delImage" aria-label="Retirer l'image">
                           <v-icon color="red">mdi-image-off-outline</v-icon>
                         </v-btn>
                       </template>
@@ -77,11 +79,12 @@
                   </v-col>
 
                   <v-col class="" cols="2" sm="1">
-                    <v-btn icon>
+                    <v-btn icon aria-label="Ajouter une image GIF">
                       <v-icon>mdi-gif</v-icon>
                     </v-btn>
                     <input
                       ref="file"
+                      id="file"
                       class="d-none"
                       type="file"
                       accept="image/png, image/jpeg, image/bmp, image/gif"
@@ -153,6 +156,8 @@ export default {
     delImage() {
       this.imageSrc = null;
       this.imageUrl = null;
+      this.$refs.file.value="";
+      
     },
     onFileChanged() {
       this.imageSrc = this.$refs.file.files[0];

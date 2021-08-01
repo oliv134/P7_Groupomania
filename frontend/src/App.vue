@@ -4,9 +4,7 @@
     <SideBar />
 
     <v-main>
-      
-        <router-view></router-view>
-     
+      <router-view></router-view>
     </v-main>
 
     <page-footer></page-footer>
@@ -28,5 +26,14 @@ export default {
     drawer: true,
     //
   }),
+  beforeMount() {
+    // controle de la présence d'un token et d'un user id
+    const token = localStorage.getItem("userToken");
+    const user = JSON.parse(localStorage.getItem("userData"));
+    if (token && user && !this.$store.state.user.isLoggedIn) {
+      this.$store.dispatch("setToken", token);
+      this.$store.dispatch("setUser", user);
+    }
+  },
 };
 </script>
