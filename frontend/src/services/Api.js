@@ -3,8 +3,9 @@ import store from "../store/index";
 
 export default () => {
   //const id = !(typeof store.state.user.id === undefined) ? "" : store.state.user.id
-
-  if (!(typeof store.state.user === undefined)) {
+  //if (!(typeof store.state.user === undefined) OR !(store.state.user === {})) {
+    console.log(store.state.user.isLoggedIn)
+  if (store.state.user.isLoggedIn) {
     return axios.create({
       baseURL: `http://localhost:3000/api/`,
       headers: {
@@ -13,6 +14,7 @@ export default () => {
       },
     });
   } else {
+    console.log("ici")
     return axios.create({
       baseURL: `http://localhost:3000/api/`,
       headers: {},

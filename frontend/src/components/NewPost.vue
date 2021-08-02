@@ -62,7 +62,13 @@
                   <v-col class="" cols="2" sm="1">
                     <v-tooltip bottom v-if="!imageUrl">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon v-bind="attrs" v-on="on" @click="addImage" aria-label="Ajouter une image">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="addImage"
+                          aria-label="Ajouter une image"
+                        >
                           <v-icon>mdi-image</v-icon>
                         </v-btn>
                       </template>
@@ -70,7 +76,13 @@
                     </v-tooltip>
                     <v-tooltip bottom v-if="imageUrl">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon v-bind="attrs" v-on="on" @click="delImage" aria-label="Retirer l'image">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="delImage"
+                          aria-label="Retirer l'image"
+                        >
                           <v-icon color="red">mdi-image-off-outline</v-icon>
                         </v-btn>
                       </template>
@@ -104,7 +116,7 @@
                     </v-btn>
                   </v-col>
                   <v-col cols="6" md="4">
-                    <v-btn class="" color="info" @click="onSubmit">
+                    <v-btn class="" color="info" @click="onSubmit" :disabled="!content">
                       {{ validText }}
                       <template v-slot:loader>
                         <span class="custom-loader">
@@ -156,8 +168,7 @@ export default {
     delImage() {
       this.imageSrc = null;
       this.imageUrl = null;
-      this.$refs.file.value="";
-      
+      this.$refs.file.value = "";
     },
     onFileChanged() {
       this.imageSrc = this.$refs.file.files[0];
@@ -166,21 +177,23 @@ export default {
     },
     onSubmit() {
       const formData = new FormData();
-      formData.append("content", this.content);
+      if (this.content) {
+        formData.append("content", this.content);
 
-      if (this.update) {
-        formData.append("imageUrl", this.imageUrl);
-        formData.append("image", this.imageSrc);
-        this.$store
-          .dispatch("updatePost", { postId: this.postId, formData: formData })
-          .then(this.$emit("updatePost"));
-      } else {
-        if (this.imageSrc) {
+        if (this.update) {
+          formData.append("imageUrl", this.imageUrl);
           formData.append("image", this.imageSrc);
+          this.$store
+            .dispatch("updatePost", { postId: this.postId, formData: formData })
+            .then(this.$emit("updatePost"));
+        } else {
+          if (this.imageSrc) {
+            formData.append("image", this.imageSrc);
+          }
+          this.$store.dispatch("createPost", formData).then();
+          this.delImage();
+          this.$refs.postForm.reset();
         }
-        this.$store.dispatch("createPost", formData).then();
-        this.delImage();
-        this.$refs.postForm.reset();
       }
     },
     cancelUpdate() {

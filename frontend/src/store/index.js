@@ -76,6 +76,10 @@ export default new Vuex.Store({
       state.message = "post supprimé";
    
     },
+    CLEAR_STATE(state) {
+      state.user = {};
+      state.posts = {};
+    }
   },
   actions: {
     // **** Posts
@@ -159,6 +163,9 @@ export default new Vuex.Store({
           commit("ADD_POST", post);
         }
       );
+    },
+    clearState({ commit }) {
+      commit("CLEAR_STATE");
     }
   },
   modules: {

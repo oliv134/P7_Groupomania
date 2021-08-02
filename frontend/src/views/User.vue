@@ -194,7 +194,7 @@ export default {
         );
         this.message = response.data.message;
         this.$store.dispatch("setUser", response.data.user);
-        this.$router.push("/posts");
+        this.$router.push("/");
       } catch (error) {
         this.errorMessage = error.response.data.error;
         // A voir ici un bottomSheet

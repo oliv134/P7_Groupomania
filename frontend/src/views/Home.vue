@@ -315,9 +315,12 @@ export default {
           password: this.password,
         });
         console.log(response)
+        
         this.message = response.data.message;
         this.$store.dispatch("setToken", response.data.token);
+        console.log('jjjjjj')
         this.$store.dispatch("setUser", response.data.user);
+        console.log('jjjjjj')
         this.$router.push("/posts");
       } catch (error) {
         this.errorMessage = error.response.data.error;

@@ -1,42 +1,45 @@
 const bcrypt = require("bcrypt"); // chiffrement du password
 const db = require("../models");
 const { User } = db.sequelize.models;
-//const Sequelize = db.s;
+//const CryptoJS = require("crypto-js");
 
 const auth = require("../middleware/auth");
 
-exports.signup = (req, res, next) => {
+exports.signup = async (req, res, next) => {
   /*const imageUrl = req.file ? `${req.protocol}://${req.get("host")}/images/${
       req.file.filename}` : null */
-  admin = req.body.name == "admin";
-  if (checkPassword(req.body.password)) {
-    throw "Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial)";
+  try {
+    req.body.admin = req.body.name == "admin";
+    req.body.email = req.body.email.toLowerCase().trim();
+    if (checkPassword(req.body.password)) {
+      throw "Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial)";
+    }
+    console.log(req.body);
+    let user = await User.create(req.body);
+
+    console.log(user);
+    const token = auth.setToken(user);
+    delete user.dataValues.password;
+    //user.dataValues.email = await decryptMail(user.dataValues.email)
+    res.status(201).send({
+      user: user,
+      token: token,
+
+      message: `Votre compte est bien créé ${user.name} !`,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ error: error });
   }
-  User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    admin: admin,
-    //imageUrl: imageUrl
-  })
-
-    .then((user) => {
-      const token = auth.setToken(user);
-      user.password = undefined;
-      res.status(201).send({
-        user: user,
-        token: token,
-
-        message: `Votre compte est bien créé ${user.name} !`,
-      });
-    })
-    .catch((error) => res.status(401).json({ error: error }));
 };
 
 exports.login = async (req, res, next) => {
   try {
-    console.log(req.body);
-    const user = await User.findOne({
+    console.log(req.body.email);
+    //const encMail = await encryptMail(req.body.email);
+    //console.log(encMail)
+    req.body.email = req.body.email.toLowerCase().trim();
+    let user = await User.findOne({
       where: { email: req.body.email },
       attributes: [
         "id",
@@ -59,8 +62,8 @@ exports.login = async (req, res, next) => {
         return res.status(401).json({ error: "Mot de passe incorrect !" });
       } else {
         const token = auth.setToken(user);
-        //delete user.datavalues.password
-        console.log(user.dataValues);
+
+        delete user.dataValues.password;
         res.status(201).json({
           user: user,
           token: token,
@@ -77,11 +80,9 @@ exports.updateUser = async (req, res, next) => {
   try {
     //const checkAdmin =
     // Verification si id est renseigné
-    console.log(req.params);
-    console.log(req.body);
+
     userId = req.params.id;
-    console.log("UPDATEeUser");
-    console.log(userId);
+
     //throw("stop");
     // Verification si admin ou proprio du compte
     tokenUserId = await auth.getTokenUserId(req);
@@ -205,3 +206,8 @@ const checkPassword = (password) => {
   );
   return test.test(password);
 };
+
+/*const encryptMail = async (mail) => {
+
+   return await CryptoJS.HmacSHA512(mail, 'RANDOM_SECRET_EMAIL').toString();
+};*/

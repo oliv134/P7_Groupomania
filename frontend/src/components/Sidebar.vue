@@ -99,6 +99,7 @@ export default {
   methods: {
     logOut: function () {
     this.$store.dispatch("logOut");
+    this.$store.dispatch("clearState");
     this.$router.push("/");
     },
   },
