@@ -87,7 +87,8 @@ module.exports = (sequelize, DataTypes) => {
         },*/
         // Effacement de la photo utilisateur si elle a changé
         afterUpdate: async (user) => {
-          if (user.dataValues.imageUrl !== user._previousDataValues.imageUrl) {
+          //if (user.dataValues.imageUrl !== user._previousDataValues.imageUrl) {
+            if ((user.changed("imageUrl")) && user._previousDataValues.imageUrl) {
             await deleteImage(user._previousDataValues.imageUrl);
           }
         },

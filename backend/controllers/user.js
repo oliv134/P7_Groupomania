@@ -14,10 +14,9 @@ exports.signup = async (req, res, next) => {
     if (checkPassword(req.body.password)) {
       throw "Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial)";
     }
-    console.log(req.body);
+
     let user = await User.create(req.body);
 
-    console.log(user);
     const token = auth.setToken(user);
     delete user.dataValues.password;
     //user.dataValues.email = await decryptMail(user.dataValues.email)
@@ -28,16 +27,14 @@ exports.signup = async (req, res, next) => {
       message: `Votre compte est bien créé ${user.name} !`,
     });
   } catch (error) {
-    console.log(error);
     res.status(401).json({ error: error });
   }
 };
 
 exports.login = async (req, res, next) => {
   try {
-    console.log(req.body.email);
     //const encMail = await encryptMail(req.body.email);
-    //console.log(encMail)
+    //isLoggedog(encMail)
     req.body.email = req.body.email.toLowerCase().trim();
     let user = await User.findOne({
       where: { email: req.body.email },
@@ -94,11 +91,15 @@ exports.updateUser = async (req, res, next) => {
     if (checkPassword(req.body.password)) {
       throw "Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial)";
     }
-    req.body.imageUrl = req.file
-      ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-      : null;
-    // if (req.body.password === undefined) {req.body.password = 'null'}
+    if (req.file) {
+      req.body.imageUrl = `${req.protocol}://${req.get("host")}/images/${
+        req.file.filename
+      }`;
+    }
 
+    // if (req.body.password === undefined) {req.body.password = 'null'}
+    console.log("req.body");
+    console.log(req.body);
     User.findOne({
       where: { id: userId },
       attributes: [

@@ -1,5 +1,6 @@
 const fs = require("fs");
 const db = require("../models");
+const { Op } = require("sequelize")
 const { Post } = db.sequelize.models;
 const { Comment } = db.sequelize.models;
 const auth = require("../middleware/auth");
@@ -7,9 +8,8 @@ const user = require("../controllers/user");
 
 exports.createPost = async (req, res, next) => {
   req.body.userId = auth.getTokenUserId(req);
-  
-  req.body.imageUrl = req.file
 
+  req.body.imageUrl = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
   try {
@@ -25,12 +25,11 @@ exports.createPost = async (req, res, next) => {
 
     res.status(201).json({ post });
   } catch (error) {
-    console.log(error);
     res.status(400).json({ error });
   }
 };
 
-exports.getOnePost = (id, res, next) => {
+/*exports.getOnePost = (id, res, next) => {
   Post.findOne({
     where: { id: id },
     include: [
@@ -41,6 +40,25 @@ exports.getOnePost = (id, res, next) => {
   })
     .then((post) => res.status(200).json({ post }))
     .catch((error) => res.status(404).json({ error }));
+};*/
+exports.findPosts = async (req, res, next) => {
+  console.log(req.params)
+  const options = {
+    include: [
+      { model: db.User, attributes: ["id", "name", "email", "imageUrl"] },
+      { model: db.Likes, attributes: ["Userid"] },
+      { model: db.Reports, attributes: ["Userid"] },
+    ],
+    //limit,
+    //offset: limit * (page - 1),
+    order: [["createdAt", "DESC"]],
+  };
+  options.where = {
+    content : {[Op.substring]: req.params.content}
+  };
+  Post.findAll(options)
+    .then((posts) => res.status(200).json(posts))
+    .catch((error) => res.status(400).json({ error }));
 };
 
 exports.getAllPosts = async (req, res, next) => {
@@ -92,7 +110,6 @@ exports.updatePost = (req, res, next) => {
       res.status(400).json({ error: "Vous n'avez pas l'autorisation" });
     } else {
       post.update(req.body, { individualHooks: true }).then((post) => {
-        console.log(post);
         res.status(200).json({ post });
       });
     }
@@ -207,7 +224,6 @@ exports.createComment = async (req, res) => {
 exports.getComments = async (req, res) => {
   try {
     id = parseInt(req.params.PostId);
-    console.log(id);
 
     post = await Post.findOne({
       where: { id: id },
@@ -223,7 +239,6 @@ exports.getComments = async (req, res) => {
         },
       ],
     });
-    console.log(post);
 
     res.status(200).json({ post });
   } catch (error) {
@@ -270,7 +285,7 @@ exports.deleteComment = async (req, res) => {
         },
       ],
     });
-    console.log("destroy");
+
     res.status(201).json({ post });
   } catch (error) {
     res.status(500).json({ error: error.message });
