@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import user from "./user"
+//import user from "./user"
 import createPersistedState from "vuex-persistedstate";
 import PostService from "../services/PostService";
 
@@ -9,13 +9,12 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-
-    isLoading: false,
+    user: {},
+    isLogged: false,
     drawer: false,
     message: "",
     error: "",
     posts: [],
-
     post: {},
   },
   plugins: [
@@ -24,6 +23,13 @@ export default new Vuex.Store({
     }),
   ],
   getters: {
+        // **** Users
+        users(state) {
+          return state.users;
+        },
+        user(state) {
+          return state.user;
+        },
     // **** posts
     posts(state) {
       return state.posts;
@@ -42,11 +48,29 @@ export default new Vuex.Store({
   },
 
   mutations: {
+        // **** users
+        SET_TOKEN(state, token) {
+          state.token = token;
+          state.id = "";
+        },
+        SET_USER(state, user) {
+          
+    
+          state.isLogged = true;
+          state.user = user;
+          //Object.assign(state, user);
+        },
+        LOG_OUT(state) {
+          sessionStorage.clear();
+          state.isLogged = false;
+          localStorage.removeItem("userToken");
+          localStorage.removeItem("userData");
+        },
   
     // **** posts
 
     GET_POSTS(state, posts) {
-      (state.posts = posts), (state.user.isLoading = false);
+      (state.posts = posts);
       // tri par id
       state.posts.sort(function compare(a, b) {
         if (a.id < b.id)
@@ -82,6 +106,31 @@ export default new Vuex.Store({
     }
   },
   actions: {
+        // **** users
+        setToken({ commit }, token) {
+          commit("SET_TOKEN", token);
+          localStorage.setItem("userToken", token);
+        },
+        setUser({ commit }, user) {
+          // ajout de l'id du user dans le store pour la vérification token + userId dans le backend (injection de l'id dans le header de la requete)
+          console.log(user);
+          user.initial = user.name.substring(0, 1).toUpperCase();
+    
+          commit("SET_USER", user);
+    
+          // ensuite mise à jour de user dans le store avec toutes les informations
+          /*Auth.getUserById(user.id).then((response) => {
+            const user = response.data.user;
+            
+          });*/
+    
+          localStorage.setItem("userData", JSON.stringify(user));
+          //user.password = undefined;
+          //commit("SET_USER", user);
+        },
+        logOut({ commit }) {
+          commit("LOG_OUT");
+        },
     // **** Posts
     createPost({ commit }, post) {
       PostService.createPost(post).then((response) => {
@@ -96,9 +145,16 @@ export default new Vuex.Store({
           });
         });*/
     },
-    getPosts({ commit }) {
-      PostService.getPosts().then((response) => {
+    getPosts({ commit }, content = null) {
+      PostService.getPosts(content).then((response) => {
         const posts = response.data;
+        commit("GET_POSTS", posts);
+      });
+    },
+    findPosts({ commit }, content) {
+      PostService.findPosts(content).then((response) => {
+        const posts = response.data;
+        console.log(posts)
         commit("GET_POSTS", posts);
       });
     },
@@ -169,6 +225,6 @@ export default new Vuex.Store({
     }
   },
   modules: {
-    user
+    //user
   },
 });

@@ -99,7 +99,7 @@
                       id="file"
                       class="d-none"
                       type="file"
-                      accept="image/png, image/jpeg, image/bmp, image/gif"
+                      accept="image/gif"
                       @change="onFileChanged"
                     />
                   </v-col>

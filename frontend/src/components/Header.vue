@@ -2,8 +2,8 @@
   <v-app-bar
     :clipped-left="$vuetify.breakpoint.lgAndUp"
     app
-    color="blue darken-3"
-    dark
+    color="red lighten-4"
+    
   >
     <v-avatar
       @click.stop="$store.state.drawer = !$store.state.drawer"
@@ -24,7 +24,7 @@
       <router-link to="/">
         <v-img
           class=""
-          src="@/assets/icon-left-font-monochrome-white.svg"
+          src="@/assets/icon-left-font-monochrome-black.svg"
           alt="logo groupomania"
           max-height="60"
           max-width="140"
@@ -41,20 +41,22 @@
       @focus="switchReducer()"
       @blur="switchReducer()"
       :class="{ closed: searchReduced }"
-      v-if="$store.state.user.isLoggedIn"
+      v-if="logged"
       placeholder="Recherche"
       prepend-inner-icon="mdi-magnify"
       hide-details
       filled
       rounded
       dense
+      @keydown.enter="findPosts"
+      v-model="searchContent"
     >
     </v-text-field>
 
     <v-avatar
       @click.stop="$store.state.drawer = !$store.state.drawer"
       color="indigo"
-      v-if="$vuetify.breakpoint.lgAndUp && $store.state.user.isLoggedIn"
+      v-if="$vuetify.breakpoint.lgAndUp && logged"
     >
       <span class="white--text headline" v-if="!$store.state.user.imageUrl">
         {{ $store.state.user.initial }}
@@ -74,6 +76,7 @@ export default {
   name: "Header",
   data: () => ({
     searchReduced: true,
+    searchContent : null,
     drawer: false,
     items: [
       { title: "Home", icon: "mdi-view-dashboard" },
@@ -86,7 +89,19 @@ export default {
     switchReducer() {
       this.searchReduced = !this.searchReduced;
     },
+    findPosts() {
+      this.$store.dispatch("findPosts", this.searchContent);
+      this.searchContent = "";
+      this.switchReducer;
+
+    }
   },
+  computed: {
+    logged() {
+      return this.$store.state.isLogged
+    }
+  }
+
 };
 </script>
 

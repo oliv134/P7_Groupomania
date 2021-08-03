@@ -30,7 +30,7 @@ export default {
     // controle de la présence d'un token et d'un user id
     const token = localStorage.getItem("userToken");
     const user = JSON.parse(localStorage.getItem("userData"));
-    if (token && user && !this.$store.state.user.isLoggedIn) {
+    if (token && user && !this.$store.state.isLogged) {
       this.$store.dispatch("setToken", token);
       this.$store.dispatch("setUser", user);
     }

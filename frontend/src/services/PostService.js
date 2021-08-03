@@ -4,6 +4,10 @@ export default {
   getPosts() {
     return Api().get("posts");
   },
+  findPosts(content)
+  {
+    return Api().get("posts/" + content);
+  },
   getHotPosts() {
     return Api().get("posts/hot");
   },

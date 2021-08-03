@@ -33,18 +33,22 @@ export default {
     },
   },
   beforeMount() {
-    if (!this.$store.state.user.isLoggedIn) {
+    if (!this.$store.state.isLogged) {
       this.$router.push({ name: "home" });
     } else {
       this.$store.dispatch("getPosts");
     }
-    console.log(this.$store.state.user.isLoggedIn)
+   
   },
   methods: {
     deletePost(id) {
       this.$store.dispatch("deletePost", id);
     },
   },
-  beforeCreate() {},
+  beforeCreate() {
+    if (!this.$store.state.isLogged) {
+      this.$router.push("/");
+    }
+  },
 };
 </script>
