@@ -79,13 +79,13 @@ exports.updateUser = async (req, res, next) => {
     // Verification si id est renseigné
 
     userId = req.params.id;
-
+console.log(req.body)
     //throw("stop");
     // Verification si admin ou proprio du compte
     tokenUserId = await auth.getTokenUserId(req);
     admin = await this.isAdmin(tokenUserId);
 
-    if (userId != req.params.id || admin) {
+    if ((userId != req.params.id) || !admin) {
       throw "NO Admin";
     }
     if (checkPassword(req.body.password)) {
@@ -98,8 +98,6 @@ exports.updateUser = async (req, res, next) => {
     }
 
     // if (req.body.password === undefined) {req.body.password = 'null'}
-    console.log("req.body");
-    console.log(req.body);
     User.findOne({
       where: { id: userId },
       attributes: [
@@ -197,7 +195,7 @@ exports.isAdmin = async (id) => {
     where: { id: id },
     attributes: ["admin"],
   });
-
+console.log(response.admin)
   return response.admin;
 };
 

@@ -14,6 +14,7 @@ export default new Vuex.Store({
     drawer: false,
     message: "",
     error: "",
+    whatPosts: "all",
     posts: [],
     post: {},
   },

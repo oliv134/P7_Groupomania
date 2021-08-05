@@ -46,7 +46,7 @@ export default {
       return moment
         .utc(this.comment.createdAt)
         .local()
-        .format("dddd Do MMM YYYY HH:mm:ss");
+        .format("dddd Do MMM YYYY à HH:mm:ss");
     },
     ownerName() {
       return this.isOwner ? "Vous avez" : this.comment.User.name + " a";

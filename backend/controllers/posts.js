@@ -42,7 +42,7 @@ exports.createPost = async (req, res, next) => {
     .catch((error) => res.status(404).json({ error }));
 };*/
 exports.findPosts = async (req, res, next) => {
-  console.log(req.params)
+
   const options = {
     include: [
       { model: db.User, attributes: ["id", "name", "email", "imageUrl"] },
@@ -62,10 +62,10 @@ exports.findPosts = async (req, res, next) => {
 };
 
 exports.getAllPosts = async (req, res, next) => {
-  const limit = parseInt(req.query.limit) || 4;
-  const page = parseInt(req.query.page) || 1;
+  //const limit = parseInt(req.query.limit) || 4;
+  //const page = parseInt(req.query.page) || 1;
   //const countPosts = ((await Post.count()) - (limit * page)) / limt + 1;
-  //console.log(countPosts)
+  console.log("ici")
   const options = {
     include: [
       { model: db.User, attributes: ["id", "name", "email", "imageUrl"] },
@@ -82,6 +82,23 @@ exports.getAllPosts = async (req, res, next) => {
       userId: parseInt(req.query.userId),
     };
   }
+  const filter = req.baseUrl.substr(req.baseUrl.lastIndexOf('/') + 1) 
+  console.log(filter)
+switch (filter) {
+  case 'liked':
+    options.where = {
+      likesCount: ">0",
+    };
+    options.order = [["likesCount", "DESC"]];
+    break;
+  case "reported":
+    options.where = {
+      reportsCount: ">0",
+    };
+    options.order = [["reportsCount", "DESC"]];
+    break;
+  }
+
 
   Post.findAll(options)
     .then((posts) => res.status(200).json(posts))

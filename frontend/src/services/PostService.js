@@ -8,8 +8,11 @@ export default {
   {
     return Api().get("posts/" + content);
   },
-  getHotPosts() {
-    return Api().get("posts/hot");
+  getLikedPosts() {
+    return Api().get("posts/liked");
+  },
+  getReportedPosts() {
+    return Api().get("posts/reported");
   },
   getPostById(id) {
     return Api().get("posts/" + id);

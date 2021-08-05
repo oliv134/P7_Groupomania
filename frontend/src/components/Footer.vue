@@ -15,6 +15,12 @@
       <span>Favoris</span>
       <v-icon>mdi-heart</v-icon>
     </v-btn>
+
+        <v-btn text color="deep-purple accent-4">
+      <span>Signalés</span>
+      <v-icon>mdi-alert-circle</v-icon>
+    </v-btn>
+
   </v-bottom-navigation>
 </template>
 <script>
@@ -24,6 +30,11 @@ export default {
   methods: {
     logOut: function () {
       this.$store.dispatch("logOut");
+    },
+  },
+  computed: {
+    isAdmin() {
+      return this.$store.state.user.admin;
     },
   },
 };

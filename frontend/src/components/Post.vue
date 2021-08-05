@@ -93,8 +93,15 @@
                         color="green"
                         overlap
                       >
-                        <v-btn icon v-bind="attrs" v-on="on" @click="likePost" :aria-label="ariaLike">
-                          <v-icon>mdi-thumb-up-outline</v-icon>
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="likePost"
+                          :aria-label="ariaLike"
+                        >
+                          <v-icon v-show="!liked">mdi-thumb-up-outline</v-icon>
+                          <v-icon v-show="liked">mdi-thumb-up</v-icon>
                         </v-btn>
                       </v-badge>
                     </template>
@@ -120,7 +127,10 @@
                           @click="reportPost"
                           :aria-label="ariaReport"
                         >
-                          <v-icon>mdi-alert-circle-outline</v-icon>
+                          <v-icon v-show="!reported"
+                            >mdi-alert-circle-outline</v-icon
+                          >
+                          <v-icon v-show="reported">mdi-alert-circle</v-icon>
                         </v-btn>
                       </v-badge>
                     </template>
@@ -161,7 +171,10 @@
                         v-if="$vuetify.breakpoint.lgAndUp"
                       >
                         <v-avatar color="white">
-                          <span class="white--black" v-if="!$store.state.user.imageUrl">
+                          <span
+                            class="white--black"
+                            v-if="!$store.state.user.imageUrl"
+                          >
                             ( ͡° ͜ʖ ͡°)
                           </span>
                           <v-img
@@ -261,11 +274,24 @@ export default {
     likesCount() {
       return this.post.Likes.length;
     },
+    liked() {
+      return !(
+        this.post.Likes.find((x) => x.Userid === this.$store.state.user.id) ===
+        undefined
+      );
+    },
+    reported() {
+      return !(
+        this.post.Reports.find(
+          (x) => x.Userid === this.$store.state.user.id
+        ) === undefined
+      );
+    },
     localDate() {
       return moment
         .utc(this.post.createdAt)
         .local()
-        .format("dddd Do MMM YYYY HH:mm:ss");
+        .format("dddd Do MMM YYYY à HH:mm:ss");
     },
     ariaComment() {
       return "Commenter ce post numéro " + this.post.id;
@@ -281,8 +307,7 @@ export default {
     },
     ariaEdit() {
       return "Editer ce post numéro " + this.post.id;
-    }
-
+    },
   },
   methods: {
     deletePost() {
