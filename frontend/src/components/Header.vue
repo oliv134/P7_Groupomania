@@ -1,3 +1,4 @@
+const newLocal=this.$store.state.whatPosts!="search";
 <template>
   <v-app-bar
     :clipped-left="$vuetify.breakpoint.lgAndUp"
@@ -37,9 +38,9 @@
         </v-toolbar-title>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col cols="9" md="7" align="right">
+      <v-col cols="8" md="6" align="right">
         <v-text-field
-          class="mr-3 recherche"
+          class="mr-3 find"
           @focus="switchReducer()"
           @blur="switchReducer()"
           :class="{ closed: searchReduced }"
@@ -60,42 +61,52 @@
         align="right"
         v-if="$vuetify.breakpoint.lgAndUp && logged"
       >
-       
-          <v-btn-toggle
-            v-model="$store.state.whatPosts"
-            rounded
-            color="deep-purple accent-3"
+        <v-btn-toggle
+          v-model="$store.state.whatPosts"
+          v-on:change="getPosts"
+          rounded
+          mandatory
+          color="indigo darken-4"
+        >
+          <v-btn value="all" aria-label="Posts récents">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon v-bind="attrs" v-on="on">mdi-history</v-icon></template
+              >
+              <span>Posts récents</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn value="liked" aria-label="Mes likes">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon v-bind="attrs" v-on="on">mdi-heart</v-icon></template
+              >
+              <span>Mes likes</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            value="search"
+            aria-label="Les resultats de ma recherche"
+            v-if="$store.state.search"
           >
-            <v-btn value="all">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon v-bind="attrs" v-on="on"
-                    >mdi-history</v-icon
-                  ></template
-                >
-                <span>Afficher les posts récents</span>
-              </v-tooltip>
-            </v-btn>
-            <v-btn value="liked">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon v-bind="attrs" v-on="on">mdi-heart</v-icon></template
-                >
-                <span>Afficher mes likes</span>
-              </v-tooltip>
-            </v-btn>
-            <v-btn value="reported">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon v-if="isAdmin" v-bind="attrs" v-on="on"
-                    >mdi-alert-circle</v-icon
-                  >
-                </template>
-                <span>Afficher les posts signalés</span>
-              </v-tooltip>
-            </v-btn>
-          </v-btn-toggle>
-        
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon v-bind="attrs" v-on="on">mdi-magnify</v-icon></template
+              >
+              <span>Les resultats de ma recherche</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn value="reported" aria-label="Posts signalés" v-if="isAdmin">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon v-bind="attrs" v-on="on">mdi-alert-circle</v-icon>
+              </template>
+              <span>Posts signalés</span>
+            </v-tooltip>
+          </v-btn>
+        </v-btn-toggle>
+      </v-col>
+      <v-col cols="1">
         <v-avatar
           @click.stop="$store.state.drawer = !$store.state.drawer"
           color="indigo"
@@ -132,12 +143,29 @@ export default {
   }),
   methods: {
     switchReducer() {
-      this.searchReduced = !this.searchReduced;
+      if (this.$store.state.whatPosts !== "search" || this.searchReduced) {
+        this.searchReduced = !this.searchReduced;
+      }
     },
     findPosts() {
+      this.$store.dispatch("setWhatPosts", "search");
       this.$store.dispatch("findPosts", this.searchContent);
-      this.searchContent = "";
-      this.switchReducer;
+      //this.searchContent = "";
+      //this.switchReducer;
+    },
+    getPosts() {
+      if (this.$route.path != "/posts") {
+        this.$router.push("/posts");
+      }
+      if (this.$store.state.whatPosts !== "search") {
+        this.searchReduced = true;
+        this.searchContent = "";
+        this.$store.dispatch("getPosts");
+      } else {
+        this.searchContent = this.$store.state.search;
+        this.findPosts();
+        this.searchReduced = false;
+      }
     },
   },
   computed: {
@@ -153,7 +181,7 @@ export default {
 
 
 <style scoped lang="sass">
-.recherche
+.find
   transition: max-width 0.3S
   &.closed
     max-width: 70px

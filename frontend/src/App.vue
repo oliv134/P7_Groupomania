@@ -7,7 +7,8 @@
       <router-view></router-view>
     </v-main>
 
-    <page-footer></page-footer>
+    <PageFooter />
+    <Message />
   </v-app>
 </template>
 
@@ -15,17 +16,25 @@
 import PageHeader from "./components/Header.vue";
 import SideBar from "./components/Sidebar.vue";
 import PageFooter from "./components/Footer.vue";
+import Message from "@/components/Message.vue";
+
 export default {
   name: "App",
   components: {
     PageHeader,
     SideBar,
     PageFooter,
+    Message,
   },
   data: () => ({
     drawer: true,
     //
   }),
+    computed: {
+    message() {
+      return this.$store.getters.message;
+    },
+  },
   beforeMount() {
     // controle de la présence d'un token et d'un user id
     const token = localStorage.getItem("userToken");

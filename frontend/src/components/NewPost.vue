@@ -54,6 +54,7 @@
                 <v-img
                   class="rounded-lg"
                   max-height="300"
+                  contain
                   :src="imageUrl"
                   v-if="imageUrl"
                   :alt="imageUrl"
@@ -71,6 +72,14 @@
                         >
                           <v-icon>mdi-image</v-icon>
                         </v-btn>
+                        <input
+                      ref="file"
+                      id="file"
+                      class="d-none"
+                      type="file"
+                      accept="image/gif"
+                      @change="onFileChanged"
+                    />
                       </template>
                       <span>Ajouter une image</span>
                     </v-tooltip>
@@ -90,19 +99,7 @@
                     </v-tooltip>
                   </v-col>
 
-                  <v-col class="" cols="2" sm="1">
-                    <v-btn icon aria-label="Ajouter une image GIF">
-                      <v-icon>mdi-gif</v-icon>
-                    </v-btn>
-                    <input
-                      ref="file"
-                      id="file"
-                      class="d-none"
-                      type="file"
-                      accept="image/gif"
-                      @change="onFileChanged"
-                    />
-                  </v-col>
+              
                 </v-row>
                 <v-divider class="mb-2"></v-divider>
                 <v-row justify="end">

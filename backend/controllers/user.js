@@ -1,25 +1,28 @@
 const bcrypt = require("bcrypt"); // chiffrement du password
 const db = require("../models");
 const { User } = db.sequelize.models;
-//const CryptoJS = require("crypto-js");
-
 const auth = require("../middleware/auth");
 
+// création d'un compte utilisateur
 exports.signup = async (req, res, next) => {
   /*const imageUrl = req.file ? `${req.protocol}://${req.get("host")}/images/${
       req.file.filename}` : null */
   try {
+    // si nom utilisateur est admin alors le compte est admin. A supprimer en production !
     req.body.admin = req.body.name == "admin";
+    req.body.name = req.body.name.trim();
+    
+    if (!req.body.email) {
+      throw "Vous devez renseigner un email";
+    }
     req.body.email = req.body.email.toLowerCase().trim();
     if (checkPassword(req.body.password)) {
       throw "Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial)";
     }
 
     let user = await User.create(req.body);
-
     const token = auth.setToken(user);
     delete user.dataValues.password;
-    //user.dataValues.email = await decryptMail(user.dataValues.email)
     res.status(201).send({
       user: user,
       token: token,
@@ -31,13 +34,15 @@ exports.signup = async (req, res, next) => {
   }
 };
 
+// Connexion utilisateur
 exports.login = async (req, res, next) => {
   try {
-    //const encMail = await encryptMail(req.body.email);
-    //isLoggedog(encMail)
     req.body.email = req.body.email.toLowerCase().trim();
     let user = await User.findOne({
-      where: { email: req.body.email },
+      where: {
+        email: req.body.email,
+        deleted: false,
+      },
       attributes: [
         "id",
         "name",
@@ -59,7 +64,6 @@ exports.login = async (req, res, next) => {
         return res.status(401).json({ error: "Mot de passe incorrect !" });
       } else {
         const token = auth.setToken(user);
-
         delete user.dataValues.password;
         res.status(201).json({
           user: user,
@@ -73,31 +77,38 @@ exports.login = async (req, res, next) => {
   }
 };
 
+// Mise à jour d'un profil utilisateur
 exports.updateUser = async (req, res, next) => {
   try {
-    //const checkAdmin =
     // Verification si id est renseigné
+    req.body.name = req.body.name.trim();
 
+    if (req.body.email) {
+      req.body.email = req.body.email.toLowerCase().trim();
+    }
     userId = req.params.id;
-console.log(req.body)
-    //throw("stop");
+
     // Verification si admin ou proprio du compte
     tokenUserId = await auth.getTokenUserId(req);
     admin = await this.isAdmin(tokenUserId);
-
-    if ((userId != req.params.id) || !admin) {
-      throw "NO Admin";
+    if (tokenUserId != parseInt(userId) && !admin) {
+      throw "No Admin";
     }
-    if (checkPassword(req.body.password)) {
+
+    if (req.body.password && checkPassword(req.body.password)) {
       throw "Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial)";
     }
+    // récupération du nom du fichier si fichier joint
     if (req.file) {
       req.body.imageUrl = `${req.protocol}://${req.get("host")}/images/${
         req.file.filename
       }`;
+    } else {
+      if (req.body.imageUrl == "null") {
+        req.body.imageUrl = null;
+      }
     }
 
-    // if (req.body.password === undefined) {req.body.password = 'null'}
     User.findOne({
       where: { id: userId },
       attributes: [
@@ -123,7 +134,6 @@ console.log(req.body)
         });
       })
       .catch((error) => res.status(400).json({ error }));
-    //});
   } catch (error) {
     res.status(400).json({ error });
   }
@@ -166,13 +176,14 @@ exports.getAllUsers = (req, res, next) => {
   };
   User.findAll(options)
     .then((users) => {
-      res.status(200).json({ users }); // *********** Données renvoyées à revoir ALERT SECU - Admin ou Pas
+      res.status(200).json({ users });
     })
     .catch((error) => {
       res.status(400).json({ error });
     });
 };
 
+// effacement d'un compte utilisateur
 exports.deleteUserAccount = async (req, res, next) => {
   try {
     if (!req.params.id) {
@@ -195,18 +206,13 @@ exports.isAdmin = async (id) => {
     where: { id: id },
     attributes: ["admin"],
   });
-console.log(response.admin)
+
   return response.admin;
 };
 
 const checkPassword = (password) => {
   let test = new RegExp(
-    "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*d)(?=.*[@$!%*?&])[A-Za-z0-9d@$!%*?&]{8,}$/"
+    "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/"
   );
   return test.test(password);
 };
-
-/*const encryptMail = async (mail) => {
-
-   return await CryptoJS.HmacSHA512(mail, 'RANDOM_SECRET_EMAIL').toString();
-};*/

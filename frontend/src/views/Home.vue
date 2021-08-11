@@ -18,8 +18,8 @@
                         mt-8
                         text-center
                         display-2
-                        cyan--text
-                        text--accent-3
+                        grey--text
+                        text--lighten-1
                       "
                     >
                       Mot de passe oublié <br />¯\_(ツ)_/¯
@@ -39,14 +39,9 @@
                         v-model="email"
                         prepend-icon="email"
                         type="email"
-                        :rules="[
-                          (v) =>
-                            !!v ||
-                            'Cette opération est impossible sans email...',
-                          (v) => /.+@.+/.test(v) || 'Vite un café !!',
-                        ]"
+                        :rules="emailRules"
                         required
-                        color="cyan accent-3"
+                        color="grey lighten-1"
                       />
                     </v-form>
                   </v-card-text>
@@ -61,7 +56,7 @@
                     >
                   </v-card-actions>
                 </v-col>
-                <v-col cols="12" md="4" class="cyan accent-3">
+                <v-col cols="12" md="4" class="grey lighten-1">
                   <v-card-text class="white--text mt-mg-12">
                     <h1 class="text-center display-1">
                       Finally, i'm remember !!
@@ -87,8 +82,8 @@
                         mt-8
                         text-center
                         display-2
-                        teal--text
-                        text--accent-3
+                        indigo--text
+                        text--darken-4
                       "
                     >
                       Connexion
@@ -96,14 +91,32 @@
                   </v-card-title>
                   <v-card-subtitle class="mt-4">
                     <div class="text-center">
-                      <v-btn class="mx-2" fab color="black" outlined>
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        color="black"
+                        outlined
+                        aria-label="Se connecter avec facebook"
+                      >
                         <v-icon>fab fa-facebook-f</v-icon>
                       </v-btn>
 
-                      <v-btn class="mx-2" fab color="black" outlined>
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        color="black"
+                        outlined
+                        aria-label="Se connecter avec google"
+                      >
                         <v-icon>fab fa-google-plus-g</v-icon>
                       </v-btn>
-                      <v-btn class="mx-2" fab color="black" outlined>
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        color="black"
+                        outlined
+                        aria-label="Se connecter avec linkedin"
+                      >
                         <v-icon>fab fa-linkedin-in</v-icon>
                       </v-btn>
                     </div>
@@ -119,14 +132,9 @@
                         v-model="email"
                         prepend-icon="email"
                         type="email"
-                        :rules="[
-                          (v) =>
-                            !!v ||
-                            'Sans email impossible de vous identifier...',
-                          (v) => /.+@.+/.test(v) || 'Vite un café !!',
-                        ]"
+                        :rules="emailRules"
                         required
-                        color="teal accent-3"
+                        color="indigo darken-4"
                       />
 
                       <v-text-field
@@ -138,17 +146,19 @@
                         type="password"
                         :rules="[(v) => !!v || 'Ben alors !!!']"
                         required
-                        color="teal accent-3"
+                        color="indigo darken-4"
                       />
                     </v-form>
                     <h3 class="text-center mt-4">
-                      <a @click="step = 0">Mot de passe oublié ?</a>
+                      <a class="indigo--text text--darken-4" @click="step = 0"
+                        >Mot de passe oublié ?</a
+                      >
                     </h3>
                   </v-card-text>
                   <v-card-actions class="justify-center">
                     <v-btn
                       rounded
-                      color="teal accent-3"
+                      color="indigo darken-4"
                       dark
                       :disabled="!isValid"
                       class="px-5 mb-3"
@@ -157,7 +167,7 @@
                     >
                   </v-card-actions>
                 </v-col>
-                <v-col cols="12" md="4" class="teal accent-3">
+                <v-col cols="12" md="4" class="indigo darken-4">
                   <v-card-text class="white--text mt-12">
                     <h1 class="text-center display-1">Hello, Friend!</h1>
                     <h5 class="text-center">Rejoignez-nous dans l'aventure</h5>
@@ -175,18 +185,18 @@
                 <v-col
                   cols="12"
                   md="4"
-                  class="teal accent-3"
+                  class="red lighten-4"
                   order="1"
                   order-md="0"
                 >
-                  <v-card-text class="white--text mt-12">
+                  <v-card-text class="black--text mt-12">
                     <h1 class="text-center display-1">Welcome Back!</h1>
                     <h5 class="text-center">
                       Identifiez-vous et partageons nos idées
                     </h5>
                   </v-card-text>
                   <div class="text-center">
-                    <v-btn rounded outlined dark @click="step--" class="mb-3"
+                    <v-btn rounded outlined @click="step--" class="mb-3"
                       >Connexion</v-btn
                     >
                   </div>
@@ -199,8 +209,8 @@
                         mt-8
                         text-center
                         display-2
-                        teal--text
-                        text--accent-3
+                        red--text
+                        text--lighten-4
                       "
                     >
                       Inscription
@@ -208,14 +218,32 @@
                   </v-card-title>
                   <v-card-subtitle class="mt-4">
                     <div class="text-center">
-                      <v-btn class="mx-2" fab color="black" outlined>
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        color="black"
+                        outlined
+                        aria-label="Se connecter avec facebook"
+                      >
                         <v-icon>fab fa-facebook-f</v-icon>
                       </v-btn>
 
-                      <v-btn class="mx-2" fab color="black" outlined>
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        color="black"
+                        outlined
+                        aria-label="Se connecter avec google"
+                      >
                         <v-icon>fab fa-google-plus-g</v-icon>
                       </v-btn>
-                      <v-btn class="mx-2" fab color="black" outlined>
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        color="black"
+                        outlined
+                        aria-label="Se connecter avec linkedin"
+                      >
                         <v-icon>fab fa-linkedin-in</v-icon>
                       </v-btn>
                     </div>
@@ -231,7 +259,8 @@
                         v-model="name"
                         prepend-icon="person"
                         type="text"
-                        color="teal accent-3"
+                        color="red lighten-4"
+                        required
                       />
                       <v-text-field
                         label="Email"
@@ -239,7 +268,9 @@
                         v-model="email"
                         prepend-icon="email"
                         type="text"
-                        color="teal accent-3"
+                        color="red lighten-4"
+                        :rules="emailRules"
+                        required
                       />
                       <v-text-field
                         id="password"
@@ -248,15 +279,16 @@
                         v-model="password"
                         prepend-icon="lock"
                         type="password"
-                        color="teal accent-3"
+                        color="red lighten-4"
+                        :rules="passwordRules"
+                        required
                       />
                     </v-form>
                   </v-card-text>
                   <v-card-actions class="justify-center">
                     <v-btn
                       rounded
-                      color="teal accent-3"
-                      dark
+                      color="red lighten-4"
                       class="px-5 mb-3"
                       @click.prevent="signup"
                     >
@@ -270,20 +302,34 @@
         </v-card>
       </v-col>
     </v-row>
+    
   </v-container>
 </template>
 
 <script>
 import Auth from "../services/Auth.js";
+
 export default {
   data: () => ({
     step: 1,
     name: "",
     email: "",
     password: "",
-    errorMessage: null,
     isValid: true,
     message: null,
+    emailRules: [
+      (v) => !!v || "Votre adresse doit être renseignée",
+      (v) =>
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
+        "Votre adresse email est invalide",
+    ],
+    passwordRules: [
+      (v) =>
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+          v
+        ) ||
+        "Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial)",
+    ],
   }),
   props: {
     source: String,
@@ -296,16 +342,14 @@ export default {
           email: this.email,
           password: this.password,
         });
-        this.message = response.data.message;
+        this.$store.dispatch("setSnackBar", response);
         this.$store.dispatch("setToken", response.data.token);
         this.$store.dispatch("setUser", response.data.user);
         this.$router.push("/posts");
       } catch (error) {
-        this.errorMessage = error.response.data.error;
-        // A voir ici un bottomSheet
-        setTimeout(() => {
-          this.errorMessage = "";
-        }, 1500);
+        if (error.response.data.error) {
+          this.$store.dispatch("setSnackBar", error);
+        }
       }
     },
     async login() {
@@ -314,17 +358,16 @@ export default {
           email: this.email,
           password: this.password,
         });
-        this.message = response.data.message;
+        this.$store.dispatch("setSnackBar", response);
         this.$store.dispatch("setToken", response.data.token);
         this.$store.dispatch("setUser", response.data.user);
         this.$router.push("/posts");
       } catch (error) {
-        this.errorMessage = error.response.data.error;
-        setTimeout(() => {
+        if (error.response.data.error != {}) {
+          this.$store.dispatch("setSnackBar", error);
           this.email = "";
           this.password = "";
-          this.errorMessage = "";
-        }, 1500);
+        }
       }
     },
   },

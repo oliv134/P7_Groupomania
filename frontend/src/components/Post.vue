@@ -16,7 +16,7 @@
             <v-col cols="2" md="1" class="text-center px-0">
               <v-avatar color="indigo">
                 <span class="white--text" v-if="!post.User.imageUrl">
-                  ( ͡° ͜ʖ ͡°)
+                  {{ postUserInitial }}
                 </span>
                 <v-img
                   v-if="post.User.imageUrl"
@@ -61,6 +61,7 @@
                 :src="post.imageUrl"
                 :alt="post.imageUrl"
                 max-height="300"
+                contain
                 class="rounded-lg"
               >
               </v-img>
@@ -175,7 +176,7 @@
                             class="white--black"
                             v-if="!$store.state.user.imageUrl"
                           >
-                            ( ͡° ͜ʖ ͡°)
+                            {{ postUserInitial }}
                           </span>
                           <v-img
                             :src="$store.state.user.imageUrl"
@@ -233,6 +234,7 @@
         </v-card>
       </v-col>
     </v-row>
+
   </v-container>
 </template>
 
@@ -240,6 +242,7 @@
 import NewPost from "@/components/NewPost.vue";
 import Comment from "@/components/Comment.vue";
 import moment from "moment";
+
 export default {
   name: "Posts",
   components: {
@@ -255,6 +258,7 @@ export default {
       required: (value) =>
         !!value || "Il faut quand même écrire quelque chose.",
     },
+    message: null
   }),
   props: {
     post: {
@@ -262,6 +266,9 @@ export default {
     },
   },
   computed: {
+    postUserInitial() {
+      return this.post.User.name.substring(0, 1).toUpperCase();
+    },
     isOwner() {
       return this.post.User.id === this.$store.state.user.id;
     },
@@ -269,22 +276,19 @@ export default {
       return this.$store.state.user.admin;
     },
     reportsCount() {
-      return this.post.Reports.length;
+      return this.post.reportsCount;
     },
     likesCount() {
-      return this.post.Likes.length;
+      return this.post.likesCount;
     },
     liked() {
       return !(
-        this.post.Likes.find((x) => x.Userid === this.$store.state.user.id) ===
-        undefined
+        this.post.Likes.find((x) => x.UserId === this.$store.state.user.id) === undefined
       );
     },
     reported() {
       return !(
-        this.post.Reports.find(
-          (x) => x.Userid === this.$store.state.user.id
-        ) === undefined
+        this.post.Reports.find((x) => x.UserId === this.$store.state.user.id) === undefined
       );
     },
     localDate() {
@@ -348,7 +352,7 @@ export default {
     },
     deleteComment() {
       this.$store.dispatch("deleteComment", {
-        id: this.comment.id,
+        id: this.comment.id
       });
     },
   },

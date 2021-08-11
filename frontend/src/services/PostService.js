@@ -1,18 +1,20 @@
 import Api from "../services/Api";
-
+import store from "../store/index";
 export default {
   getPosts() {
-    return Api().get("posts");
+    switch (store.state.whatPosts) {
+      case "all":
+        return Api().get("posts");
+
+      case "liked":
+        return Api().get("posts/liked/" + store.state.user.id);
+
+      case "reported":
+        return Api().get("posts/reported");
+    }
   },
-  findPosts(content)
-  {
-    return Api().get("posts/" + content);
-  },
-  getLikedPosts() {
-    return Api().get("posts/liked");
-  },
-  getReportedPosts() {
-    return Api().get("posts/reported");
+  findPosts(content) {
+    return Api().get("posts/find/" + content);
   },
   getPostById(id) {
     return Api().get("posts/" + id);
@@ -40,5 +42,5 @@ export default {
   },
   getComments(id, data) {
     return Api().get("posts/" + id + "/comments/", data);
-  }
+  },
 };

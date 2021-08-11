@@ -12,7 +12,7 @@
             <v-col
               cols="12"
               md="4"
-              class="teal accent-3"
+              class="indigo darken-4"
               order="1"
               order-md="0"
             >
@@ -50,22 +50,15 @@
               <div class="text-center mt-6">
                 <v-dialog v-model="dialog" persistent max-width="290">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      rounded
-                      dark
-                      class="mb-3"
-                      v-bind="attrs"
-                      v-on="on"
+                    <v-btn rounded dark class="mb-3" v-bind="attrs" v-on="on"
                       >Supprimer mon profil</v-btn
                     >
                   </template>
                   <v-card>
-                    <v-card-title class="headline"
-                      >Attention !</v-card-title
-                    >
+                    <v-card-title class="headline">Attention !</v-card-title>
                     <v-card-text
-                      >La suppression du compte est irreversible.
-                      Souhaitez vous continuez ?</v-card-text
+                      >La suppression du compte est irreversible. Souhaitez vous
+                      continuez ?</v-card-text
                     >
                     <v-card-actions>
                       <v-spacer></v-spacer>
@@ -84,7 +77,7 @@
             <v-col cols="12" md="8">
               <v-card-title class="justify-center align-start">
                 <h1
-                  class="mt-8 text-center display-2 teal--text text--accent-3"
+                  class="mt-8 text-center display-2 indigo--text text--darken-4"
                 >
                   Mon Profil
                 </h1>
@@ -100,15 +93,17 @@
                     v-model="name"
                     prepend-icon="person"
                     type="text"
-                    color="teal accent-3"
+                    color="indigo darken-4"
+                    required
                   />
                   <v-text-field
                     label="Email"
+                    :placeholder="$store.state.user.email"
                     name="email"
                     v-model="email"
                     prepend-icon="email"
                     type="text"
-                    color="teal accent-3"
+                    color="indigo darken-4"
                   />
                   <v-text-field
                     id="password"
@@ -117,14 +112,25 @@
                     v-model="password"
                     prepend-icon="lock"
                     type="password"
-                    color="teal accent-3"
+                    color="indigo darken-4"
+                    :rules="rules"
+                    @blur="clearRules"
+                    @focus="setRules"
                   />
                 </v-form>
               </v-card-text>
               <v-card-actions class="justify-center">
                 <v-btn
                   rounded
-                  color="teal accent-3"
+                  color="red lighten-4"
+                  class="px-5 mb-3 mr-3"
+                  to="/"
+                >
+                  Annuler
+                </v-btn>
+                <v-btn
+                  rounded
+                  color="indigo darken-4"
                   dark
                   class="px-5 mb-3"
                   @click.prevent="updateUser"
@@ -136,32 +142,35 @@
           </v-row>
         </v-card>
       </v-col>
-      
     </v-row>
-    
+    <Message :message="message"> </Message>
   </v-container>
 </template>
 
 <script>
 import Auth from "../services/Auth.js";
+import Message from "@/components/Message.vue";
 export default {
+  components: {
+    Message,
+  },
   data() {
     return {
       step: 1,
       name: this.$store.state.user.name,
-      email: this.$store.state.user.email,
+      email: null,
       imageUrl: this.$store.state.user.imageUrl,
       imageSrc: null,
       upImageUrl: this.$store.state.user.imageUrl,
       password: null,
-      errorMessage: null,
+  
       isValid: true,
       message: null,
       dialog: false,
-      back: false
+    
+      rules: [],
     };
   },
-
   methods: {
     addImage() {
       this.$refs.file.click();
@@ -173,43 +182,61 @@ export default {
     onFileChanged() {
       this.imageSrc = this.$refs.file.files[0];
       this.imageUrl = URL.createObjectURL(this.imageSrc);
-      console.log(this.imageUrl);
-      // do something
     },
     async updateUser() {
       try {
         const formData = new FormData();
         formData.append("name", this.name);
-        formData.append("email", this.email);
+        if (this.email) {
+          formData.append("email", this.email);
+        }
 
-        if (this.password != null) {
+        if (this.password) {
           formData.append("password", this.password);
         }
         if (this.imageUrl != this.upImageUrl) {
           formData.append("image", this.imageSrc);
         }
+        if (!this.imageUrl) {
+          formData.append("imageUrl", null);
+        }
         const response = await Auth.updateUser(
           this.$store.state.user.id,
           formData
         );
+
         this.message = response.data.message;
+
         this.$store.dispatch("setUser", response.data.user);
         this.$router.push("/");
       } catch (error) {
-        this.errorMessage = error.response.data.error;
-        // A voir ici un bottomSheet
+        this.message = error.response.data.error;
+
         setTimeout(() => {
-          this.errorMessage = "";
+          this.message = "";
         }, 1500);
       }
     },
     async delUser() {
-      await Auth.deleteUser(this.$store.state.user.id)
-      this.dialog=false;
+      await Auth.deleteUser(this.$store.state.user.id);
+      this.dialog = false;
       this.$store.dispatch("logOut");
-      this.$router.push('/');
+      this.$router.push("/");
     },
-   
+    setRules() {
+      this.rules = [
+        (v) =>
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*d)(?=.*[@$!%*?&])[A-Za-z0-9d@$!%*?&]{8,}$/.test(
+            v
+          ) ||
+          "Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial)",
+      ];
+    },
+    clearRules() {
+      if (!this.password) {
+        this.rules = [];
+      }
+    },
   },
   beforeCreate() {
     if (!this.$store.state.isLogged) {

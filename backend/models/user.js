@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
           }
           if (user.email) {
             user.hashEmail = await encryptMail(user.email);
-            console.log(user.email);
+
             user.email = maskEmail(user.email);
           }
         },
@@ -68,7 +68,6 @@ module.exports = (sequelize, DataTypes) => {
           }
         },
         beforeFind: async (user) => {
-          console.log(user.where);
           if (user.where.email) {
             user.where.hashEmail = await encryptMail(user.where.email);
             delete user.where.email;
@@ -88,24 +87,10 @@ module.exports = (sequelize, DataTypes) => {
         // Effacement de la photo utilisateur si elle a changé
         afterUpdate: async (user) => {
           //if (user.dataValues.imageUrl !== user._previousDataValues.imageUrl) {
-            if ((user.changed("imageUrl")) && user._previousDataValues.imageUrl) {
+          if (user.changed("imageUrl") && user._previousDataValues.imageUrl) {
             await deleteImage(user._previousDataValues.imageUrl);
           }
         },
-        /*afterFind: async (result) => {
-          console.log("oooooooooooooo");
-          if (result) {
-            if (result.constructor === Array) {
-              const arrayLength = result.length;
-              for (let i = 0; i < arrayLength; i++) {
-                result[i].email = await decryptMail(result[i].email);
-              }
-            } else {
-              result.email = await decryptMail(result.email);
-            }
-          }
-          return result;
-        },*/
       },
     }
   );
@@ -126,15 +111,20 @@ module.exports = (sequelize, DataTypes) => {
     function mask(str) {
       var strLen = str.length;
       if (strLen > 4) {
-          return str.substr(0, 1) + str.substr(1, strLen - 1).replace(/\w/g, '*') + str.substr(-1,1);
-      } 
-      return str.replace(/\w/g, '*');
-  }
-  return email.replace(/([\w.]+)@([\w.]+)(\.[\w.]+)/g, function (m, p1, p2, p3) {      
-      return mask(p1) + '@' + mask(p2) + p3;
-  });
-   
-  
+        return (
+          str.substr(0, 1) +
+          str.substr(1, strLen - 1).replace(/\w/g, "*") +
+          str.substr(-1, 1)
+        );
+      }
+      return str.replace(/\w/g, "*");
+    }
+    return email.replace(
+      /([\w.]+)@([\w.]+)(\.[\w.]+)/g,
+      function (m, p1, p2, p3) {
+        return mask(p1) + "@" + mask(p2) + p3;
+      }
+    );
   };
   return User;
 };

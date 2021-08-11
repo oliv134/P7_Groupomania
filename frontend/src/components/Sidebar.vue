@@ -81,12 +81,6 @@ export default {
         to: "/user",
       },
       {
-        icon: "mdi-chat",
-        title: "Retour aux Posts",
-        action: () => {},
-        to: "/",
-      },
-      {
         icon: "mdi-logout",
         title: "Déconnexion",
         action: () => {
@@ -100,7 +94,6 @@ export default {
     logOut: function () {
     this.$store.state.drawer = false;
     this.$store.dispatch("logOut");
-    this.$store.dispatch("clearState");
     this.$router.push("/");
     },
   },

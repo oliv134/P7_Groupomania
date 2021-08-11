@@ -4,19 +4,20 @@ import Vuex from "vuex";
 import createPersistedState from "vuex-persistedstate";
 import PostService from "../services/PostService";
 
-
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    token: null,
     user: {},
     isLogged: false,
     drawer: false,
-    message: "",
     error: "",
     whatPosts: "all",
     posts: [],
     post: {},
+    search: null,
+    snackbar: { active: false, color: "", message: "" },
   },
   plugins: [
     createPersistedState({
@@ -24,13 +25,13 @@ export default new Vuex.Store({
     }),
   ],
   getters: {
-        // **** Users
-        users(state) {
-          return state.users;
-        },
-        user(state) {
-          return state.user;
-        },
+    // **** Users
+    users(state) {
+      return state.users;
+    },
+    user(state) {
+      return state.user;
+    },
     // **** posts
     posts(state) {
       return state.posts;
@@ -40,44 +41,43 @@ export default new Vuex.Store({
     },
 
     // **** message
-    messageRetour(state) {
+    message(state) {
       return state.message;
-    },
-    errorMessage(state) {
-      return state.error;
     },
   },
 
   mutations: {
-        // **** users
-        SET_TOKEN(state, token) {
-          state.token = token;
-          state.id = "";
-        },
-        SET_USER(state, user) {
-          
-    
-          state.isLogged = true;
-          state.user = user;
-          //Object.assign(state, user);
-        },
-        LOG_OUT(state) {
-          sessionStorage.clear();
-          state.isLogged = false;
-          localStorage.removeItem("userToken");
-          localStorage.removeItem("userData");
-        },
-  
+    // **** users
+    SET_TOKEN(state, token) {
+      state.token = token;
+      state.user.id = "";
+    },
+    SET_USER(state, user) {
+      state.isLogged = true;
+      state.user = user;
+      //Object.assign(state, user);
+    },
+    LOG_OUT(state) {
+      sessionStorage.clear();
+      state.isLogged = false;
+      state.token = null;
+      state.user = {};
+      state.posts = {};
+      state.search = null;
+      state.whatPosts = "all";
+      state.snackbar = { active: false, color: "", message: "" };
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("userData");
+    },
+
     // **** posts
 
     GET_POSTS(state, posts) {
-      (state.posts = posts);
+      state.posts = posts;
       // tri par id
       state.posts.sort(function compare(a, b) {
-        if (a.id < b.id)
-           return 1;
-        if (a.id > b.id )
-           return -1;
+        if (a.id < b.id) return 1;
+        if (a.id > b.id) return -1;
         return 0;
       });
     },
@@ -86,146 +86,180 @@ export default new Vuex.Store({
       state.message = "post créé";
       // tri par id
       state.posts.sort(function compare(a, b) {
-        if (a.id < b.id)
-           return 1;
-        if (a.id > b.id )
-           return -1;
+        if (a.id < b.id) return 1;
+        if (a.id > b.id) return -1;
         return 0;
       });
- 
     },
     DEL_POST(state, id) {
-
       state.posts = state.posts.filter((item) => item.id != id);
-   
       state.message = "post supprimé";
-   
     },
-    CLEAR_STATE(state) {
-      state.user = {};
-      state.posts = {};
-    }
+    SET_SEARCH(state, content) {
+      state.search = content;
+    },
+    WHAT_POSTS(state, status) {
+      state.whatPosts = status;
+    },
+    SET_SNACKBAR(state, response) {
+      if (response.data != undefined) {
+        state.snackbar = {
+          active: true,
+          color: "success",
+          message: response.data.message,
+        };
+      }
+      if (response.response != undefined) {
+        state.snackbar = {
+          active: true,
+          color: "success",
+          message: response.response.data.error,
+        };
+      }
+    },
   },
   actions: {
-        // **** users
-        setToken({ commit }, token) {
-          commit("SET_TOKEN", token);
-          localStorage.setItem("userToken", token);
-        },
-        setUser({ commit }, user) {
-          // ajout de l'id du user dans le store pour la vérification token + userId dans le backend (injection de l'id dans le header de la requete)
-          console.log(user);
-          user.initial = user.name.substring(0, 1).toUpperCase();
-    
-          commit("SET_USER", user);
-    
-          // ensuite mise à jour de user dans le store avec toutes les informations
-          /*Auth.getUserById(user.id).then((response) => {
+    // **** users
+    setToken({ commit }, token) {
+      commit("SET_TOKEN", token);
+      localStorage.setItem("userToken", token);
+    },
+    setUser({ commit }, user) {
+      // ajout de l'id du user dans le store pour la vérification token + userId dans le backend (injection de l'id dans le header de la requete)
+
+      user.initial = user.name.substring(0, 1).toUpperCase();
+
+      commit("SET_USER", user);
+
+      // ensuite mise à jour de user dans le store avec toutes les informations
+      /*Auth.getUserById(user.id).then((response) => {
             const user = response.data.user;
             
           });*/
-    
-          localStorage.setItem("userData", JSON.stringify(user));
-          //user.password = undefined;
-          //commit("SET_USER", user);
-        },
-        logOut({ commit }) {
-          commit("LOG_OUT");
-        },
+
+      localStorage.setItem("userData", JSON.stringify(user));
+    },
+    logOut({ commit }) {
+      commit("LOG_OUT");
+    },
     // **** Posts
-    createPost({ commit }, post) {
-      PostService.createPost(post).then((response) => {
+    async createPost({ commit }, post) {
+      try {
+        const response = await PostService.createPost(post);
+        commit("ADD_POST", response.data.post);
+      } catch (error) {
+        commit("SET_SNACKBAR", error);
+      }
+    },
+    async getPosts({ commit }, content = null) {
+      try {
+        const response = await PostService.getPosts(content);
+        commit("GET_POSTS", response.data);
+      } catch (error) {
+        commit("SET_SNACKBAR", error);
+      }
+    },
+    async findPosts({ commit }, content) {
+      commit("SET_SEARCH", content);
+      try {
+        const response = await PostService.findPosts(content);
+        const posts = response.data;
+        commit("GET_POSTS", posts);
+      } catch (error) {
+        commit("SET_SNACKBAR", error);
+      }
+    },
+    async updatePost({ commit }, payload) {
+      try {
+        const response = await PostService.updatePost(
+          payload.postId,
+          payload.formData
+        );
+        commit("SET_SNACKBAR", response);
         const post = response.data.post;
+        commit("DEL_POST", post.id);
         commit("ADD_POST", post);
-      });
-
-      /*.then(() => {
-          PostService.getPosts().then((response) => {
-           const posts = response.data;
-           commit("GET_POSTS", posts);
-          });
-        });*/
-    },
-    getPosts({ commit }, content = null) {
-      PostService.getPosts(content).then((response) => {
-        const posts = response.data;
-        commit("GET_POSTS", posts);
-      });
-    },
-    findPosts({ commit }, content) {
-      PostService.findPosts(content).then((response) => {
-        const posts = response.data;
-        console.log(posts)
-        commit("GET_POSTS", posts);
-      });
-    },
-    updatePost({ commit }, payload) {
-      PostService.updatePost(payload.postId, payload.formData).then(
-        (response) => {
-          const post = response.data.post;
-          commit("DEL_POST", post.id);
-          commit("ADD_POST", post);
-        }
-      );
+      } catch (error) {
+        commit("SET_SNACKBAR", error);
+      }
     },
 
-    deletePost({ commit }, id) {
-      PostService.deletePost(id).then((response) => {
-        const id = response.data.id;
-        commit("DEL_POST", id);
-      });
+    async deletePost({ commit }, id) {
+      try {
+        const response = await PostService.deletePost(id);
+        commit("SET_SNACKBAR", response);
+        commit("DEL_POST", response.data.id);
+      } catch (error) {
+        commit("SET_SNACKBAR", error);
+      }
     },
-    likePost({ commit }, id) {
-      PostService.likePost(id).then(() => {
-        PostService.getPosts().then((response) => {
-          const posts = response.data;
-          commit("GET_POSTS", posts);
-        });
-      });
-    },
-    reportPost({ commit }, id) {
-      PostService.reportPost(id).then(() => {
-        PostService.getPosts().then((response) => {
-          const posts = response.data;
-          commit("GET_POSTS", posts);
-        });
-      });
-    },
-    createComment({ commit }, payload) {
 
-      PostService.createComment(payload.postId, payload.formData)
-      .then((response) => {
-          const post = response.data.post;
-          commit("DEL_POST", post.id);
-          commit("ADD_POST", post);
-        }
-      );
+    async likePost({ commit }, id) {
+      try {
+        let response = await PostService.likePost(id);
+        commit("SET_SNACKBAR", response);
+        response = await PostService.getPosts();
+        commit("GET_POSTS", response.data);
+      } catch (error) {
+        commit("SET_SNACKBAR", error);
+      }
     },
-    getComments({ commit }, payload) {
 
-      PostService.getComments(payload.postId, payload.formData)
-      .then((response) => {
-          const post = response.data.post;
-          commit("DEL_POST", post.id);
-          commit("ADD_POST", post);
-        }
-      );
+    async reportPost({ commit }, id) {
+      try {
+        let response = await PostService.reportPost(id);
+        commit("SET_SNACKBAR", response);
+        response = await PostService.getPosts();
+        commit("GET_POSTS", response.data);
+      } catch (error) {
+        commit("SET_SNACKBAR", error);
+      }
     },
-    deleteComment({ commit }, payload) {
-
-      PostService.deleteComment(payload.id)
-      .then((response) => {
-          const post = response.data.post;
-          commit("DEL_POST", post.id);
-          commit("ADD_POST", post);
-        }
-      );
+    async createComment({ commit }, payload) {
+      try {
+        let response = await PostService.createComment(
+          payload.postId,
+          payload.formData
+        );
+        const post = response.data.post;
+        commit("DEL_POST", post.id);
+        commit("ADD_POST", post);
+      } catch (error) {
+        commit("SET_SNACKBAR", error);
+      }
     },
-    clearState({ commit }) {
-      commit("CLEAR_STATE");
-    }
-  },
-  modules: {
-    //user
+    async getComments({ commit }, payload) {
+      try {
+        let response = await PostService.getComments(
+          payload.postId,
+          payload.formData
+        );
+        const post = response.data.post;
+        commit("DEL_POST", post.id);
+        commit("ADD_POST", post);
+      } catch (error) {
+        commit("SET_SNACKBAR", error);
+      }
+    },
+    async deleteComment({ commit }, payload) {
+      try {
+        let response = await PostService.deleteComment(payload.id);
+        commit("SET_SNACKBAR", response);
+        const post = response.data.post;
+        commit("DEL_POST", post.id);
+        commit("ADD_POST", post);
+      } catch (error) {
+        commit("SET_SNACKBAR", error);
+      }
+    },
+    setWhatPosts({ commit }, status) {
+      commit("WHAT_POSTS", status);
+    },
+    setSearch({ commit }, content) {
+      commit("SET_SEARCH", content);
+    },
+    setSnackBar({ commit }, response) {
+      commit("SET_SNACKBAR", response);
+    },
   },
 });

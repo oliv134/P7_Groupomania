@@ -14,6 +14,7 @@
       @deletePost="deletePost(post.id)"
     >
     </Post>
+    
   </v-container>
 </template>
 
@@ -33,12 +34,9 @@ export default {
     },
   },
   beforeMount() {
-    if (!this.$store.state.isLogged) {
-      this.$router.push({ name: "home" });
-    } else {
-      this.$store.dispatch("getPosts");
-    }
-   
+    this.$store.dispatch("setSearch", "");
+    this.$store.dispatch("setWhatPosts", "all");
+    this.$store.dispatch("getPosts");
   },
   methods: {
     deletePost(id) {
