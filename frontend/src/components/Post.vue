@@ -117,7 +117,6 @@
                         :content="reportsCount"
                         :value="reportsCount"
                         :v-show="reportsCount"
-                        v-if="!isOwner"
                         label="Nombre de signalements"
                         color="orange"
                         overlap
@@ -127,7 +126,8 @@
                           icon
                           v-bind="attrs"
                           v-on="on"
-                          
+                          :disabled="isOwner"
+                          :aria-disabled="isOwner"
                           @click="reportPost"
                           :aria-label="ariaReport"
                         >
