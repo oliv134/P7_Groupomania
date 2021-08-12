@@ -117,14 +117,17 @@
                         :content="reportsCount"
                         :value="reportsCount"
                         :v-show="reportsCount"
+                        v-if="!isOwner"
                         label="Nombre de signalements"
                         color="orange"
                         overlap
+                        
                       >
                         <v-btn
                           icon
                           v-bind="attrs"
                           v-on="on"
+                          
                           @click="reportPost"
                           :aria-label="ariaReport"
                         >
