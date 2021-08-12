@@ -41,9 +41,9 @@ const newLocal=this.$store.state.whatPosts!="search";
       <v-col cols="8" md="6" align="right">
         <v-text-field
           class="mr-3 find"
-          @focus="switchReducer()"
-          @blur="switchReducer()"
-          :class="{ closed: searchReduced }"
+          @focus="switchReducerOn()"
+          @blur="switchReducerOff()"
+          :class="{ closed: !$store.state.search.expand }"
           v-if="logged"
           placeholder="Recherche"
           prepend-inner-icon="mdi-magnify"
@@ -51,8 +51,10 @@ const newLocal=this.$store.state.whatPosts!="search";
           filled
           rounded
           dense
+          clearable
           @keydown.enter="findPosts"
-          v-model="searchContent"
+          @click:clear="clearFind()"
+          v-model="$store.state.search.text"
         >
         </v-text-field>
       </v-col>
@@ -87,7 +89,7 @@ const newLocal=this.$store.state.whatPosts!="search";
           <v-btn
             value="search"
             aria-label="Les resultats de ma recherche"
-            v-if="$store.state.search"
+            v-if="$store.state.search.content"
           >
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -131,8 +133,6 @@ const newLocal=this.$store.state.whatPosts!="search";
 export default {
   name: "Header",
   data: () => ({
-    searchReduced: true,
-    searchContent: null,
     drawer: false,
     items: [
       { title: "Home", icon: "mdi-view-dashboard" },
@@ -142,30 +142,51 @@ export default {
     show: true,
   }),
   methods: {
-    switchReducer() {
-      if (this.$store.state.whatPosts !== "search" || this.searchReduced) {
-        this.searchReduced = !this.searchReduced;
+    switchReducerOn() {
+      if (
+        this.$store.state.whatPosts !== "search" ||
+        !this.$store.state.search.expand
+      ) {
+        this.$store.dispatch("setSearchExpand", true);
       }
     },
-    findPosts() {
-      this.$store.dispatch("setWhatPosts", "search");
-      this.$store.dispatch("findPosts", this.searchContent);
-      //this.searchContent = "";
-      //this.switchReducer;
+    switchReducerOff() {
+      if (
+        this.$store.state.whatPosts !== "search" ||
+        !this.$store.state.search.expand
+      ) {
+        this.$store.dispatch("setSearchExpand", false);
+      }
     },
     getPosts() {
       if (this.$route.path != "/posts") {
         this.$router.push("/posts");
       }
       if (this.$store.state.whatPosts !== "search") {
-        this.searchReduced = true;
-        this.searchContent = "";
+        this.$store.dispatch("setSearchExpand", false);
+        this.$store.dispatch("setSearchText", "");
         this.$store.dispatch("getPosts");
       } else {
-        this.searchContent = this.$store.state.search;
+        this.$store.dispatch("setSearchText", this.$store.state.search.content);
         this.findPosts();
-        this.searchReduced = false;
+        this.$store.dispatch("setSearchExpand", true);
       }
+    },
+    findPosts() {
+      if (this.$route.path != "/posts") {
+        this.$router.push("/posts");
+      }
+      this.$store.dispatch("setSearchContent", this.$store.state.search.text);
+      this.$store.dispatch("setWhatPosts", "search");
+      if (this.$store.state.search.content) {
+        this.$store.dispatch("findPosts", this.$store.state.search.content);
+      }
+    },
+    clearFind() {
+      this.$store.dispatch("setSearchContent", "");
+      this.$store.dispatch("setSearchText", "");
+      this.$store.dispatch("setWhatPosts", "all");
+      this.$store.dispatch("getPosts");
     },
   },
   computed: {
@@ -178,8 +199,6 @@ export default {
   },
 };
 </script>
-
-
 <style scoped lang="sass">
 .find
   transition: max-width 0.3S

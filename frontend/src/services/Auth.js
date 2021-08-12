@@ -5,7 +5,6 @@ export default {
     return Api().post("users/signup", data);
   },
   login(data) {
-  
     return Api().post("users/login", data);
   },
   deleteUser(id = null) {

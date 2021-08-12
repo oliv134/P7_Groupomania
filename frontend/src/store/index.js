@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Vuex from "vuex";
-//import user from "./user"
 import createPersistedState from "vuex-persistedstate";
 import PostService from "../services/PostService";
 
@@ -16,7 +15,7 @@ export default new Vuex.Store({
     whatPosts: "all",
     posts: [],
     post: {},
-    search: null,
+    search: { content: "", expand: false },
     snackbar: { active: false, color: "", message: "" },
   },
   plugins: [
@@ -44,6 +43,10 @@ export default new Vuex.Store({
     message(state) {
       return state.message;
     },
+
+    search(state) {
+      return state.search;
+    },
   },
 
   mutations: {
@@ -63,7 +66,8 @@ export default new Vuex.Store({
       state.token = null;
       state.user = {};
       state.posts = {};
-      state.search = null;
+      state.search.content = null;
+      state.search.expand = false;
       state.whatPosts = "all";
       state.snackbar = { active: false, color: "", message: "" };
       localStorage.removeItem("userToken");
@@ -95,8 +99,15 @@ export default new Vuex.Store({
       state.posts = state.posts.filter((item) => item.id != id);
       state.message = "post supprimé";
     },
-    SET_SEARCH(state, content) {
-      state.search = content;
+    SET_SEARCH_CONTENT(state, content) {
+      state.search.content = content;
+    },
+    SET_SEARCH_TEXT(state, text) {
+      state.search.text = text;
+    },
+    SET_SEARCH_EXPAND(state, status) {
+
+      state.search.expand = status;
     },
     WHAT_POSTS(state, status) {
       state.whatPosts = status;
@@ -160,11 +171,10 @@ export default new Vuex.Store({
       }
     },
     async findPosts({ commit }, content) {
-      commit("SET_SEARCH", content);
+      commit("SET_SEARCH_EXPAND", content);
       try {
         const response = await PostService.findPosts(content);
-        const posts = response.data;
-        commit("GET_POSTS", posts);
+        commit("GET_POSTS", response.data);
       } catch (error) {
         commit("SET_SNACKBAR", error);
       }
@@ -255,8 +265,14 @@ export default new Vuex.Store({
     setWhatPosts({ commit }, status) {
       commit("WHAT_POSTS", status);
     },
-    setSearch({ commit }, content) {
-      commit("SET_SEARCH", content);
+    setSearchContent({ commit }, content ) {
+      commit("SET_SEARCH_CONTENT", content);
+    },
+    setSearchText({ commit}, text ) {
+      commit("SET_SEARCH_TEXT", text);
+    },
+    setSearchExpand({ commit }, status ) {
+      commit("SET_SEARCH_EXPAND", status);
     },
     setSnackBar({ commit }, response) {
       commit("SET_SNACKBAR", response);

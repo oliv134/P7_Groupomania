@@ -73,6 +73,7 @@
                 </v-col>
               </v-row>
             </v-window-item>
+            
             <v-window-item :value="1">
               <v-row>
                 <v-col cols="12" md="8">
@@ -180,6 +181,7 @@
                 </v-col>
               </v-row>
             </v-window-item>
+            
             <v-window-item :value="2">
               <v-row class="fill-height">
                 <v-col

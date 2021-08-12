@@ -9,14 +9,8 @@
       <v-col sm="8">
         <v-card class="elevation-6">
           <v-row class="fill-height">
-            <v-col
-              cols="12"
-              md="4"
-              class="indigo darken-4"
-              order="1"
-              order-md="0"
-            >
-              <v-card-text class="white--text mt-12 text-center">
+            <v-col cols="12" md="4" class="indigo darken-4">
+              <v-card-text class="white--text mt-md-12 text-center">
                 <v-avatar color="indigo" size="128">
                   <span class="white--text display-1" v-if="!imageUrl">
                     {{ $store.state.user.initial }}
@@ -163,11 +157,11 @@ export default {
       imageSrc: null,
       upImageUrl: this.$store.state.user.imageUrl,
       password: null,
-  
+
       isValid: true,
       message: null,
       dialog: false,
-    
+
       rules: [],
     };
   },
@@ -226,8 +220,8 @@ export default {
     setRules() {
       this.rules = [
         (v) =>
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*d)(?=.*[@$!%*?&])[A-Za-z0-9d@$!%*?&]{8,}$/.test(
-            v
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+                      v
           ) ||
           "Le mot de passe doit contenir au moins 8 caractères (dont au moins une majuscule, une minuscule, un chiffre, un caractère spécial)",
       ];

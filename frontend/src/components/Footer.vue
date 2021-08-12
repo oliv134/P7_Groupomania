@@ -33,20 +33,34 @@ export default {
   name: "PageFooter",
   data: () => ({}),
   methods: {
-    getPosts() {
-      if (this.$route.path !="/posts") { this.$router.push("/posts");}
+        getPosts() {
+      if (this.$route.path != "/posts") {
+        this.$router.push("/posts");
+      }
       if (this.$store.state.whatPosts !== "search") {
-      
-        this.searchReduced = true;
-        this.searchContent = "";
+        this.$store.dispatch("setSearchExpand", false);
+        this.$store.dispatch("setSearchText", "");
         this.$store.dispatch("getPosts");
       } else {
-      
-        this.searchContent = this.$store.state.search;
+        this.$store.dispatch("setSearchText", this.$store.state.search.content);
         this.findPosts();
-        this.searchReduced = false;
+        this.$store.dispatch("setSearchExpand", true);
       }
     },
+    findPosts() {
+      if (this.$route.path != "/posts") {
+        this.$router.push("/posts");
+      }
+      this.$store.dispatch("setSearchContent", this.$store.state.search.text);
+      this.$store.dispatch("setWhatPosts", "search");
+      if (this.$store.state.search.content ) {this.$store.dispatch("findPosts", this.$store.state.search.content)}
+    },
+    clearFind() {
+      this.$store.dispatch("setSearchContent", "");
+      this.$store.dispatch("setSearchText", "");
+      this.$store.dispatch("setWhatPosts", "all");
+      this.$store.dispatch("getPosts");
+    }
   },
   computed: {
     isAdmin() {
