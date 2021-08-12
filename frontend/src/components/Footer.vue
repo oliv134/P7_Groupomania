@@ -19,7 +19,7 @@
     <v-btn
       value="search"
       aria-label="Les resultats de ma recherche"
-      v-if="$store.state.search"
+      v-if="$store.state.search.content"
     >
       <v-icon class="mx-0">mdi-magnify</v-icon>
     </v-btn>

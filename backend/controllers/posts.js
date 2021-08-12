@@ -150,7 +150,7 @@ exports.updatePost = (req, res, next) => {
       res.status(400).json({ error: "Vous n'avez pas l'autorisation" });
     } else {
       post.update(req.body, { individualHooks: true }).then((post) => {
-        res.status(200).json({ post });
+        res.status(200).json({ post, message: "Le post a été mis à jour" });
       });
     }
   });

@@ -70,16 +70,16 @@
                           @click="addImage"
                           aria-label="Ajouter une image"
                         >
-                          <v-icon>mdi-image</v-icon>
+                        <v-icon>mdi-image</v-icon>
                         </v-btn>
                         <input
-                      ref="file"
-                      id="file"
-                      class="d-none"
-                      type="file"
-                      accept="image/gif"
-                      @change="onFileChanged"
-                    />
+                          ref="file"
+                          id="file"
+                          class="d-none"
+                          type="file" 
+                          accept="image/gif"
+                          @change="onFileChanged"
+                        />
                       </template>
                       <span>Ajouter une image</span>
                     </v-tooltip>
@@ -98,8 +98,6 @@
                       <span>Retirer l'image</span>
                     </v-tooltip>
                   </v-col>
-
-              
                 </v-row>
                 <v-divider class="mb-2"></v-divider>
                 <v-row justify="end">
@@ -113,7 +111,12 @@
                     </v-btn>
                   </v-col>
                   <v-col cols="6" md="4">
-                    <v-btn class="" color="info" @click="onSubmit" :disabled="!content">
+                    <v-btn
+                      class=""
+                      color="info"
+                      @click="onSubmit"
+                      :disabled="!content"
+                    >
                       {{ validText }}
                       <template v-slot:loader>
                         <span class="custom-loader">
@@ -165,12 +168,12 @@ export default {
     delImage() {
       this.imageSrc = null;
       this.imageUrl = null;
-      this.$refs.file.value = "";
+      //this.$refs.file.value = null;
     },
     onFileChanged() {
+      console.log("fiel changed")
       this.imageSrc = this.$refs.file.files[0];
       this.imageUrl = URL.createObjectURL(this.imageSrc);
-      // do something
     },
     onSubmit() {
       const formData = new FormData();
@@ -194,8 +197,10 @@ export default {
       }
     },
     cancelUpdate() {
-      this.delImage();
-      this.$refs.postForm.reset();
+      if (!this.update) {
+        this.delImage();
+        this.$refs.postForm.reset();
+      }
       this.$emit("updatePost");
     },
   },
@@ -208,8 +213,10 @@ export default {
     if (this.update) {
       this.content = this.upContent;
       this.imageUrl = this.upImageUrl === "null" ? null : this.upImageUrl;
-      this.$refs.contentInput.focus();
     }
+  },
+  mounted() {
+    this.$refs.contentInput.focus();
   },
 };
 </script>

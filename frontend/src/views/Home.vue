@@ -57,7 +57,7 @@
                   </v-card-actions>
                 </v-col>
                 <v-col cols="12" md="4" class="grey lighten-1">
-                  <v-card-text class="white--text mt-mg-12">
+                  <v-card-text class="white--text mt-md-12">
                     <h1 class="text-center display-1">
                       Finally, i'm remember !!
                     </h1>
@@ -181,7 +181,7 @@
                 </v-col>
               </v-row>
             </v-window-item>
-            
+
             <v-window-item :value="2">
               <v-row class="fill-height">
                 <v-col

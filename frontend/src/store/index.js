@@ -106,19 +106,20 @@ export default new Vuex.Store({
       state.search.text = text;
     },
     SET_SEARCH_EXPAND(state, status) {
-
       state.search.expand = status;
     },
     WHAT_POSTS(state, status) {
       state.whatPosts = status;
     },
     SET_SNACKBAR(state, response) {
-      if (response.data != undefined) {
-        state.snackbar = {
-          active: true,
-          color: "success",
-          message: response.data.message,
-        };
+      if (response.data != undefined && response.data.message != undefined) {
+       
+          state.snackbar = {
+            active: true,
+            color: "success",
+            message: response.data.message,
+          };
+       
       }
       if (response.response != undefined) {
         state.snackbar = {
@@ -265,13 +266,13 @@ export default new Vuex.Store({
     setWhatPosts({ commit }, status) {
       commit("WHAT_POSTS", status);
     },
-    setSearchContent({ commit }, content ) {
+    setSearchContent({ commit }, content) {
       commit("SET_SEARCH_CONTENT", content);
     },
-    setSearchText({ commit}, text ) {
+    setSearchText({ commit }, text) {
       commit("SET_SEARCH_TEXT", text);
     },
-    setSearchExpand({ commit }, status ) {
+    setSearchExpand({ commit }, status) {
       commit("SET_SEARCH_EXPAND", status);
     },
     setSnackBar({ commit }, response) {
