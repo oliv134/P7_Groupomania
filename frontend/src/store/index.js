@@ -124,7 +124,7 @@ export default new Vuex.Store({
       if (response.response != undefined) {
         state.snackbar = {
           active: true,
-          color: "success",
+          color: "error",
           message: response.response.data.error,
         };
       }
@@ -168,7 +168,7 @@ export default new Vuex.Store({
         const response = await PostService.getPosts(content);
         commit("GET_POSTS", response.data);
       } catch (error) {
-        commit("SET_SNACKBAR", error);
+        commit("LOG_OUT");
       }
     },
     async findPosts({ commit }, content) {
