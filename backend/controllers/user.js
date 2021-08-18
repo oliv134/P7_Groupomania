@@ -30,7 +30,7 @@ exports.signup = async (req, res, next) => {
       message: `Votre compte est bien créé ${user.name} !`,
     });
   } catch (error) {
-    res.status(401).json({ error: error });
+    res.status(401).json({ error: "Les informations saisies sont incorrectes !" });
   }
 };
 
