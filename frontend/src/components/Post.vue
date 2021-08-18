@@ -179,7 +179,7 @@
                             class="white--black"
                             v-if="!$store.state.user.imageUrl"
                           >
-                            {{ postUserInitial }}
+                            {{ $store.state.user.initial }}
                           </span>
                           <v-img
                             :src="$store.state.user.imageUrl"

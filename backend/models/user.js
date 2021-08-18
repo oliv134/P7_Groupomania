@@ -73,20 +73,8 @@ module.exports = (sequelize, DataTypes) => {
             delete user.where.email;
           }
         },
-        /*afterCreate: async (result) => {
-          if (result.constructor === Array) {
-            var arrayLength = result.length;
-            for (var i = 0; i < arrayLength; i++) {
-              result[i].email = await decryptMail(result[i].email);
-            }
-          } else {
-            result.email = await decryptMail(result.email);
-          }
-          return result;
-        },*/
         // Effacement de la photo utilisateur si elle a changé
         afterUpdate: async (user) => {
-          //if (user.dataValues.imageUrl !== user._previousDataValues.imageUrl) {
           if (user.changed("imageUrl") && user._previousDataValues.imageUrl) {
             await deleteImage(user._previousDataValues.imageUrl);
           }
